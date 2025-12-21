@@ -103,7 +103,6 @@ export default function Home() {
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
   const [jd, setJd] = useState("");
-  const [template, setTemplate] = useState("Resume-1.html");
   const [disable, setDisable] = useState(false);
 
   // Load profiles on mount
@@ -152,8 +151,7 @@ export default function Home() {
           profile: selectedProfile,
           jd: jd,
           company: company,
-          role: role,
-          template: template
+          role: role
         })
       });
 
@@ -206,14 +204,13 @@ export default function Home() {
     } finally {
       setDisable(false);
     }
-  }, [disable, selectedProfile, jd, company, role, template, selectedProfileData]);
+  }, [disable, selectedProfile, jd, company, role, selectedProfileData]);
 
   // Memoize handlers to prevent re-renders
   const handleProfileChange = useCallback((e) => setSelectedProfile(e.target.value), []);
   const handleCompanyChange = useCallback((e) => setCompany(e.target.value), []);
   const handleRoleChange = useCallback((e) => setRole(e.target.value), []);
   const handleJdChange = useCallback((e) => setJd(e.target.value), []);
-  const handleTemplateChange = useCallback((e) => setTemplate(e.target.value), []);
 
   return (
     <div style={containerStyle}>
@@ -241,28 +238,6 @@ export default function Home() {
                 {profile.name}
               </option>
             ))}
-          </select>
-        </div>
-
-        <div style={{ marginBottom: "30px" }}>
-          <label style={labelStyle}>
-            Select Template
-          </label>
-          <select
-            value={template}
-            onChange={handleTemplateChange}
-            style={selectStyle}
-          >
-            <option value="Resume-1.html">Resume-1.html</option>
-            <option value="Resume-2.html">Resume-2.html</option>
-            <option value="Resume-3.html">Resume-3.html</option>
-            <option value="Resume-4.html">Resume-4.html</option>
-            <option value="Resume-5.html">Resume-5.html</option>
-            <option value="Resume-6.html">Resume-6.html</option>
-            <option value="Resume-7.html">Resume-7.html</option>
-            <option value="Resume-8.html">Resume-8.html</option>
-            <option value="Resume-9.html">Resume-9.html</option>
-            <option value="Resume-10.html">Resume-10.html</option>
           </select>
         </div>
 

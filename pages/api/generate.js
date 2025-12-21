@@ -120,35 +120,19 @@ const onsiteKeywords = [
 // Cache template compilation
 const templateCacheByPath = new Map();
 
-const getTemplatePathForSelection = (templateSelection) => {
+const getTemplatePathForProfile = (profileName) => {
   const templatesDir = path.join(process.cwd(), "templates");
   const defaultTemplatePath = path.join(templatesDir, "Resume-1.html");
 
-  if (typeof templateSelection === "string") {
-    const trimmed = templateSelection.trim();
-
-    // Prefer filename selection: "Resume-7.html"
-    const isAllowedFilename = /^Resume-(10|[1-9])\.html$/i.test(trimmed);
-    if (isAllowedFilename) {
-      return path.join(templatesDir, trimmed);
-    }
-
-    // Backwards-compatible: accept numeric strings like "7"
-    const asNumber = Number(trimmed);
-    if (Number.isFinite(asNumber) && asNumber >= 1 && asNumber <= 10) {
-      return path.join(templatesDir, `Resume-${asNumber}.html`);
-    }
+  if (typeof profileName !== "string" || !profileName.trim()) {
+    return defaultTemplatePath;
   }
 
-  if (typeof templateSelection === "number" && templateSelection >= 1 && templateSelection <= 10) {
-    return path.join(templatesDir, `Resume-${templateSelection}.html`);
-  }
-
-  return defaultTemplatePath;
+  return path.join(templatesDir, `${profileName.trim()}.html`);
 };
 
-const getTemplate = (templateSelection) => {
-  let currentTemplatePath = getTemplatePathForSelection(templateSelection);
+const getTemplate = (profileName) => {
+  let currentTemplatePath = getTemplatePathForProfile(profileName);
   const defaultTemplatePath = path.join(process.cwd(), "templates", "Resume-1.html");
 
   if (!fs.existsSync(currentTemplatePath)) {
@@ -265,7 +249,7 @@ export default async function handler(req, res) {
       model: process.env.ANTHROPIC_MODEL || "claude-3-haiku-20240307",
     });
 
-    const { profile, jd, company, role, template } = req.body;
+    const { profile, jd, company, role } = req.body;
 
     if (!profile) return res.status(400).send("Profile required");
     if (!jd) return res.status(400).send("Job description required");
@@ -547,7 +531,7 @@ ${jd}
     });
 
     // Get cached template (compiled once per file, reused)
-    const templateFn = getTemplate(template);
+    const templateFn = getTemplate(profile);
 
     // Prepare data for template
     const templateData = {
