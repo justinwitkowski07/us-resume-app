@@ -1,12 +1,56 @@
 import chromium from "@sparticuz/chromium";
 import puppeteerCore from "puppeteer-core";
-import puppeteer from "puppeteer";
 import Anthropic from "@anthropic-ai/sdk";
 import fs from "fs";
 import path from "path";
 import Handlebars from "handlebars";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+const getLocalChromeExecutablePath = () => {
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) return process.env.PUPPETEER_EXECUTABLE_PATH;
+
+  // Common locations (best-effort). If none exist, puppeteer-core may still work via `channel`.
+  const candidates = [];
+
+  if (process.platform === "win32") {
+    const programFiles = process.env.PROGRAMFILES;
+    const programFilesX86 = process.env["PROGRAMFILES(X86)"];
+    const localAppData = process.env.LOCALAPPDATA;
+
+    if (programFiles) {
+      candidates.push(path.join(programFiles, "Google", "Chrome", "Application", "chrome.exe"));
+      candidates.push(path.join(programFiles, "Microsoft", "Edge", "Application", "msedge.exe"));
+    }
+    if (programFilesX86) {
+      candidates.push(path.join(programFilesX86, "Google", "Chrome", "Application", "chrome.exe"));
+      candidates.push(path.join(programFilesX86, "Microsoft", "Edge", "Application", "msedge.exe"));
+    }
+    if (localAppData) {
+      candidates.push(path.join(localAppData, "Google", "Chrome", "Application", "chrome.exe"));
+      candidates.push(path.join(localAppData, "Microsoft", "Edge", "Application", "msedge.exe"));
+    }
+  } else if (process.platform === "darwin") {
+    candidates.push("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome");
+    candidates.push("/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge");
+  } else {
+    // linux
+    candidates.push("/usr/bin/google-chrome");
+    candidates.push("/usr/bin/google-chrome-stable");
+    candidates.push("/usr/bin/chromium-browser");
+    candidates.push("/usr/bin/chromium");
+  }
+
+  for (const p of candidates) {
+    try {
+      if (p && fs.existsSync(p)) return p;
+    } catch {
+      // ignore
+    }
+  }
+
+  return null;
+};
 
 // Move utility functions outside handler to avoid recreation
 const calculateYears = (experience) => {
@@ -525,15 +569,28 @@ ${jd}
         headless: chromium.headless,
       });
     } else {
-      // Local development with optimized settings
-      browser = await puppeteer.launch({ 
+      // Local dev: use your system Chrome/Chromium.
+      // Set PUPPETEER_EXECUTABLE_PATH to your Chrome path if launch fails.
+      const localExecutablePath = getLocalChromeExecutablePath();
+
+      const launchOptions = {
         headless: "new",
         args: [
           '--disable-dev-shm-usage',
           '--disable-gpu',
           '--no-sandbox'
         ]
-      });
+      };
+
+      if (localExecutablePath) {
+        launchOptions.executablePath = localExecutablePath;
+      } else {
+        // puppeteer-core requires either executablePath or channel
+        // This works when Chrome is installed and discoverable by Puppeteer.
+        launchOptions.channel = "chrome";
+      }
+
+      browser = await puppeteerCore.launch(launchOptions);
     }
 
     const page = await browser.newPage();
