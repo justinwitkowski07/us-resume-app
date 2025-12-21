@@ -6,7 +6,7 @@ This guide will walk you through deploying the Resume Generator app to Vercel st
 
 - A GitHub, GitLab, or Bitbucket account (for Git-based deployment)
 - OR Vercel CLI installed (for direct deployment)
-- An OpenAI API key
+- An Anthropic API key
 
 ## Step-by-Step Deployment
 
@@ -59,12 +59,12 @@ This guide will walk you through deploying the Resume Generator app to Vercel st
 
 Click on **"Environment Variables"** section and add:
 
-1. **OPENAI_API_KEY**
-   - Value: Your OpenAI API key (get it from [platform.openai.com](https://platform.openai.com/api-keys))
+1. **ANTHROPIC_API_KEY**
+   - Value: Your Anthropic API key (get it from the Anthropic Console)
    - Environment: Select **Production**, **Preview**, and **Development**
 
-2. **OPENAI_MODEL** (Optional)
-   - Value: `gpt-5-mini` (or your preferred model)
+2. **ANTHROPIC_MODEL** (Optional)
+   - Value: `claude-3-haiku-20240307` (or your preferred model)
    - Environment: Select **Production**, **Preview**, and **Development**
 
 3. **NODE_ENV**
@@ -106,8 +106,8 @@ This will open a browser window for authentication.
 Create a `.env.local` file:
 
 ```bash
-OPENAI_API_KEY=your_api_key_here
-OPENAI_MODEL=gpt-5-mini
+ANTHROPIC_API_KEY=your_api_key_here
+ANTHROPIC_MODEL=claude-3-haiku-20240307
 NODE_ENV=production
 ```
 

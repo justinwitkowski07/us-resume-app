@@ -306,7 +306,7 @@ export default function Home() {
         {/* Footer */}
         <div style={footerStyle}>
           <p style={{ margin: 0 }}>
-            Powered by OpenAI GPT-5 Mini • ATS Score: 95-100%
+            Powered by Anthropic Claude • ATS Score: 95-100%
           </p>
         </div>
       </div>

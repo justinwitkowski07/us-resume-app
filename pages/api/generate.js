@@ -1,12 +1,12 @@
 import chromium from "@sparticuz/chromium";
 import puppeteerCore from "puppeteer-core";
 import puppeteer from "puppeteer";
-import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 import fs from "fs";
 import path from "path";
 import Handlebars from "handlebars";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 // Move utility functions outside handler to avoid recreation
 const calculateYears = (experience) => {
@@ -121,58 +121,58 @@ const loadProfile = (profileName) => {
   return profileData;
 };
 
-// Call OpenAI with timeout & retries (optimized with reduced maxTokens)
-async function callOpenAI(promptOrMessages, model = null, maxTokens = 32000, retries = 2, timeoutMs = 90000) {
+// Call Claude with timeout & retries
+async function callClaude(promptOrMessages, model = null, maxTokens = 8192, retries = 2, timeoutMs = 90000) {
   while (retries > 0) {
     try {
+      if (!process.env.ANTHROPIC_API_KEY) {
+        throw new Error("Missing ANTHROPIC_API_KEY");
+      }
+
       // Handle both string prompts and message arrays
       let messages;
       let systemPrompt = null;
-      
-      if (typeof promptOrMessages === 'string') {
+
+      if (typeof promptOrMessages === "string") {
         messages = [{ role: "user", content: promptOrMessages }];
       } else if (Array.isArray(promptOrMessages)) {
-        // Extract system message if present (OpenAI supports it natively)
-        const systemMsg = promptOrMessages.find(msg => msg.role === 'system');
+        const systemMsg = promptOrMessages.find((msg) => msg.role === "system");
         if (systemMsg) {
           if (Array.isArray(systemMsg.content)) {
-            systemPrompt = systemMsg.content.map(part => (typeof part === 'string' ? part : part?.text || '')).join('\n');
+            systemPrompt = systemMsg.content
+              .map((part) => (typeof part === "string" ? part : part?.text || ""))
+              .join("\n");
           } else {
             systemPrompt = systemMsg.content;
           }
         }
-        // Convert other messages to OpenAI chat format
+
         messages = promptOrMessages
-          .filter(msg => msg.role !== 'system')
-          .map(msg => ({
-            role: msg.role,
-            content: typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)
+          .filter((msg) => msg.role !== "system")
+          .map((msg) => ({
+            role: msg.role === "assistant" ? "assistant" : "user",
+            content: typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content),
           }));
       } else {
         messages = [{ role: "user", content: String(promptOrMessages) }];
       }
 
-      if (systemPrompt) {
-        messages.unshift({ role: 'system', content: systemPrompt });
-      }
-
       const apiParams = {
-        model: model || process.env.OPENAI_MODEL || "gpt-5-mini",
-        max_completion_tokens: maxTokens,
+        model: model || process.env.ANTHROPIC_MODEL || "claude-3-haiku-20240307",
+        max_tokens: maxTokens,
         temperature: 1,
-        messages: messages
+        messages,
       };
-      
-      // Add system prompt if present
+
       if (systemPrompt) {
         apiParams.system = systemPrompt;
       }
 
       return await Promise.race([
-        openai.chat.completions.create(apiParams),
+        anthropic.messages.create(apiParams),
         new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("OpenAI request timed out")), timeoutMs)
-        )
+          setTimeout(() => reject(new Error("Anthropic request timed out")), timeoutMs)
+        ),
       ]);
     } catch (err) {
       retries--;
@@ -366,19 +366,19 @@ ${jd}
 **OUTPUT:** ONLY valid JSON: {"title":"...","summary":"...","skills":{"Category":["Skill1","Skill2"]},"experience":[{"title":"...","details":["bullet1","bullet2"]}]}
 `;
 
-    const aiResponse = await callOpenAI(prompt);
+    const aiResponse = await callClaude(prompt);
     
     // Log token usage to debug if we're hitting limits
-    console.log("OpenAI API Response Metadata:");
+    console.log("Anthropic API Response Metadata:");
     console.log("- Model:", aiResponse.model);
-    const finishReason = aiResponse.choices?.[0]?.finish_reason;
-    console.log("- Finish reason:", finishReason);
-    console.log("- Prompt tokens:", aiResponse.usage?.prompt_tokens);
-    console.log("- Completion tokens:", aiResponse.usage?.completion_tokens);
+    const finishReason = aiResponse.stop_reason;
+    console.log("- Stop reason:", finishReason);
+    console.log("- Input tokens:", aiResponse.usage?.input_tokens);
+    console.log("- Output tokens:", aiResponse.usage?.output_tokens);
     
     let content;
-    if (finishReason === 'length') {
-      console.error("⚠️ WARNING: OpenAI hit the length limit! Response was truncated.");
+    if (finishReason === 'max_tokens') {
+      console.error("⚠️ WARNING: Claude hit the max_tokens limit! Response was truncated.");
       console.log("🔄 Retrying with reduced requirements to fit in token limit...");
       
       // Retry with a more concise prompt
@@ -388,14 +388,14 @@ ${jd}
         .replace(/6 bullets each/g, '5 bullets each')
         .replace(/5-6 bullets per job/g, '4-5 bullets per job');
       
-      const retryResponse = await callOpenAI(concisePrompt);
+      const retryResponse = await callClaude(concisePrompt);
       console.log("Retry Response Metadata:");
-      console.log("- Finish reason:", retryResponse.choices?.[0]?.finish_reason);
-      console.log("- Completion tokens:", retryResponse.usage?.completion_tokens);
+      console.log("- Stop reason:", retryResponse.stop_reason);
+      console.log("- Output tokens:", retryResponse.usage?.output_tokens);
       
-      content = retryResponse.choices?.[0]?.message?.content?.trim() || "";
+      content = (retryResponse.content || []).map(part => part?.text || "").join("").trim();
     } else {
-      content = aiResponse.choices?.[0]?.message?.content?.trim() || "";
+      content = (aiResponse.content || []).map(part => part?.text || "").join("").trim();
     }
     
     // Check if AI is apologizing instead of returning JSON

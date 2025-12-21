@@ -4,7 +4,7 @@
 
 ### Pre-Flight Check
 - [ ] Code is pushed to GitHub/GitLab/Bitbucket
-- [ ] OpenAI API key ready
+- [ ] Anthropic API key ready
 - [ ] Vercel account created
 
 ### Steps
@@ -22,8 +22,8 @@
 
 5. **⚠️ CRITICAL: Add Environment Variables**
    ```
-   OPENAI_API_KEY = your_key_here
-   OPENAI_MODEL = gpt-5-mini (optional)
+   ANTHROPIC_API_KEY = your_key_here
+   ANTHROPIC_MODEL = claude-3-haiku-20240307 (optional)
    ```
 
 6. **Click "Deploy"** 🎉
