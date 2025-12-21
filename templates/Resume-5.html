@@ -35,10 +35,10 @@
 
       /* Header */
       header {
-        display: grid;
+        display: flex;
+        flex-direction: column;
         grid-template-columns: 1fr auto;
-        gap: 16px;
-        align-items: end;
+        align-items: center;
         padding-bottom: 12px;
         margin-bottom: 14px;
         margin-top: -15mm;
@@ -60,7 +60,7 @@
       }
 
       .contact {
-        text-align: right;
+        text-align: center;
         font-size: 9pt;
         color: var(--text-medium);
         line-height: 1.6;
@@ -164,6 +164,8 @@
       .edu-item {
         margin-bottom: 6px;
         padding-bottom: 6px;
+        display: flex;
+        flex-direction: column;
         border-bottom: 1px solid var(--line);
       }
 
