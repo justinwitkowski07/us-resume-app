@@ -1,0 +1,41 @@
+{
+  "name": "Rodine Villar",
+  "email": "rodine.villar07@gmail.com",
+  "phone": "",
+  "location": "Pampanga, Porac, Philippines",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "The Simple Vue",
+      "title": "Senior Full Stack Engineer",
+      "location": "United State",
+      "start_date": "Jul 2023",
+      "end_date": "Jul 2025"
+    },
+    {
+      "company": "Kiggla",
+      "title": "Full Stack Developer",
+      "location": "United State",
+      "start_date": "Mar 2021",
+      "end_date": "May 2023"
+    },
+    {
+      "company": "PhilCare",
+      "title": "Frontend Developer",
+      "location": "Philippines",
+      "start_date": "Sep 2017",
+      "end_date": "Feb 2021"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's degree, Computer Science",
+      "school": "Hanoi University of Science and Technology, Vietnam",
+      "start_year": "Sep 2013",
+      "end_year": "Aug 2017"
+    }
+  ]
+}

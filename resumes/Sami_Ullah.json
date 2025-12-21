@@ -1,0 +1,54 @@
+{
+  "name": "Sami Ullah",
+  "email": "sami.ullah06@outlook.com",
+  "phone": "+1 (346) 214-6545",
+  "location": "Katy, Texas, United States",
+  "linkedin": "https://www.linkedin.com/in/sami-ullah-29955117/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Visa",
+      "title": "Lead Full Stack Developer",
+      "location": "Foster, CA",
+      "start_date": "12/2022",
+      "end_date": "Present"
+    },
+    {
+      "company": "Gilead Sciences",
+      "title": "Senior Software Developer",
+      "location": "Foster, CA",
+      "start_date": "07/2018",
+      "end_date": "12/2022"
+    },
+    {
+      "company": "FedEx",
+      "title": "Software Developer",
+      "location": "Memphis, TN",
+      "start_date": "12/2015",
+      "end_date": "07/2018"
+    },
+    {
+      "company": "Newfield Bank",
+      "title": "Software Developer",
+      "location": "Franklinville, NJ",
+      "start_date": "03/2014",
+      "end_date": "12/2015"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master of Science (M.Sc.), Information Technology",
+      "school": "Strayer University",
+      "start_year": "2007",
+      "end_year": ""
+    },
+    {
+      "degree": "Bachelor of Science (B.Sc.) in Engineering",
+      "school": "Arkansas Tech University",
+      "start_year": "2004",
+      "end_year": ""
+    }
+  ]
+}
