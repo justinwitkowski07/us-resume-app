@@ -118,33 +118,62 @@ const onsiteKeywords = [
 ];
 
 // Cache template compilation
-let templateCache = null;
-let templatePath = null;
+const templateCacheByPath = new Map();
 
-const getTemplate = () => {
-  const currentTemplatePath = path.join(process.cwd(), "templates", "Resume.html");
-  
-  // Only recompile if template path changed or cache is empty
-  if (!templateCache || templatePath !== currentTemplatePath) {
-    templatePath = currentTemplatePath;
-    const templateSource = fs.readFileSync(templatePath, "utf-8");
-    
+const getTemplatePathForSelection = (templateSelection) => {
+  const templatesDir = path.join(process.cwd(), "templates");
+  const defaultTemplatePath = path.join(templatesDir, "Resume-1.html");
+
+  if (typeof templateSelection === "string") {
+    const trimmed = templateSelection.trim();
+
+    // Prefer filename selection: "Resume-7.html"
+    const isAllowedFilename = /^Resume-(10|[1-9])\.html$/i.test(trimmed);
+    if (isAllowedFilename) {
+      return path.join(templatesDir, trimmed);
+    }
+
+    // Backwards-compatible: accept numeric strings like "7"
+    const asNumber = Number(trimmed);
+    if (Number.isFinite(asNumber) && asNumber >= 1 && asNumber <= 10) {
+      return path.join(templatesDir, `Resume-${asNumber}.html`);
+    }
+  }
+
+  if (typeof templateSelection === "number" && templateSelection >= 1 && templateSelection <= 10) {
+    return path.join(templatesDir, `Resume-${templateSelection}.html`);
+  }
+
+  return defaultTemplatePath;
+};
+
+const getTemplate = (templateSelection) => {
+  let currentTemplatePath = getTemplatePathForSelection(templateSelection);
+  const defaultTemplatePath = path.join(process.cwd(), "templates", "Resume-1.html");
+
+  if (!fs.existsSync(currentTemplatePath)) {
+    currentTemplatePath = defaultTemplatePath;
+  }
+
+  if (!templateCacheByPath.has(currentTemplatePath)) {
+    const templateSource = fs.readFileSync(currentTemplatePath, "utf-8");
+
     // Register Handlebars helpers (idempotent, safe to call multiple times)
     Handlebars.registerHelper('formatKey', function(key) {
       return key;
     });
-    
+
     Handlebars.registerHelper('join', function(array, separator) {
       if (Array.isArray(array)) {
         return array.join(separator);
       }
       return '';
     });
-    
-    templateCache = Handlebars.compile(templateSource);
+
+    templateCacheByPath.set(currentTemplatePath, Handlebars.compile(templateSource));
   }
-  
-  return templateCache;
+
+  return templateCacheByPath.get(currentTemplatePath);
 };
 
 // Cache profile data in memory to avoid repeated file reads
@@ -230,7 +259,13 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).send("Method not allowed");
 
   try {
-    const { profile, jd, company, role } = req.body;
+    console.log("Anthropic config:", {
+      hasApiKey: Boolean(process.env.ANTHROPIC_API_KEY),
+      apiKeyLength: process.env.ANTHROPIC_API_KEY ? process.env.ANTHROPIC_API_KEY.length : 0,
+      model: process.env.ANTHROPIC_MODEL || "claude-3-haiku-20240307",
+    });
+
+    const { profile, jd, company, role, template } = req.body;
 
     if (!profile) return res.status(400).send("Profile required");
     if (!jd) return res.status(400).send("Job description required");
@@ -511,8 +546,8 @@ ${jd}
       }
     });
 
-    // Get cached template (compiled once, reused)
-    const template = getTemplate();
+    // Get cached template (compiled once per file, reused)
+    const templateFn = getTemplate(template);
 
     // Prepare data for template
     const templateData = {
@@ -537,7 +572,7 @@ ${jd}
     };
 
     // Render HTML
-    const html = template(templateData);
+    const html = templateFn(templateData);
     console.log("HTML rendered from template");
 
     // Generate PDF with Puppeteer (optimized)
@@ -626,6 +661,20 @@ ${jd}
 
   } catch (err) {
     console.error("PDF generation error:", err);
-    res.status(500).send("PDF generation failed: " + err.message);
+
+    const status = err?.status;
+    const apiMessage = err?.error?.error?.message || err?.error?.message;
+
+    if (status === 403) {
+      return res
+        .status(500)
+        .send(
+          "PDF generation failed: Anthropic returned 403 Forbidden (Request not allowed). " +
+            "Check that ANTHROPIC_API_KEY is set correctly for this environment and that your Anthropic account/key has access to the configured model. " +
+            (apiMessage ? `Details: ${apiMessage}` : "")
+        );
+    }
+
+    res.status(500).send("PDF generation failed: " + (apiMessage || err.message));
   }
 }

@@ -4,7 +4,19 @@
     <meta charset="UTF-8" />
     <title>{{name}} — Resume</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
+ <style>
+      :root {
+        --primary: #3d4852;
+        --primary-dark: #2d363c;
+        --accent: #606f7b;
+        --warm: #8795a1;
+        --text-dark: #22292f;
+        --text-medium: #3d4852;
+        --text-light: #606f7b;
+        --bg: #ffffff;
+        --line: #dae1e7;
+      }
+
       * {
         margin: 0;
         padding: 0;
@@ -12,141 +24,157 @@
       }
 
       body {
-        font-family: "Cambria", "Arial", sans-serif;
-        font-size: 11pt;
-        line-height: 1.3;
-        color: #000000;
-        background: #ffffff;
+        font-family: "Book Antiqua", "Palatino", serif;
+        font-size: 10.5pt;
+        line-height: 1.4;
+        color: var(--text-dark);
+        background: var(--bg);
         max-width: 8.5in;
-      }
-
-      br {
-        font-weight: lighter;
       }
 
       /* Header */
       header {
         text-align: center;
-        margin-bottom: 16px;
-        padding-bottom: 10px;
-        margin-top: -17mm;
+        padding-bottom: 12px;
+        margin-bottom: 14px;
+        margin-top: -15mm;
       }
 
       header h1 {
-        font-size: 30pt;
-        font-weight: bold;
+        font-size: 24pt;
+        font-weight: 700;
+        color: var(--primary-dark);
+        letter-spacing: 2pt;
         margin-bottom: 3px;
-        color: #000000;
-        letter-spacing: 1pt;
       }
 
       header .title {
-        font-size: 15pt;
-        font-weight: normal;
-        margin-bottom: 6px;
-        color: #333333;
+        font-size: 11pt;
+        font-weight: 400;
+        color: var(--accent);
+        letter-spacing: 1pt;
+        margin-bottom: 8px;
+        font-family: "Calibri", sans-serif;
       }
 
       .contact {
-        font-size: 9.5pt;
-        color: #000000;
-        line-height: 1.3;
+        font-size: 9pt;
+        color: var(--text-medium);
+        font-family: "Calibri", sans-serif;
       }
 
       .contact a {
-        color: #000000;
+        color: var(--primary);
         text-decoration: none;
+      }
+
+      .contact-sep {
+        color: var(--warm);
+        margin: 0 8px;
       }
 
       /* Section Headers */
       section {
-        margin-bottom: 24px;
+        margin-bottom: 12px;
       }
 
       section h2 {
-        font-size: 13pt;
-        font-weight: bold;
+        font-size: 10.5pt;
+        font-weight: 700;
         text-transform: uppercase;
-        color: #000000;
-        border-bottom: 1.5pt solid #000000;
-        padding-bottom: 2px;
+        color: var(--primary-dark);
+        letter-spacing: 1.5pt;
         margin-bottom: 8px;
-        letter-spacing: 1pt;
+        padding-bottom: 3px;
+        border-bottom: 1px solid var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      section h2::before {
+        content: "";
+        width: 3px;
+        height: 12px;
+        background: var(--accent);
       }
 
       /* Summary */
       .summary {
         font-size: 10pt;
-        line-height: 1.4;
-        text-align: left;
-        color: #000000;
+        line-height: 1.55;
+        color: var(--text-medium);
+        text-align: justify;
+        padding-left: 12px;
+        border-left: 2px solid var(--warm);
       }
 
       /* Skills */
       .skills-category {
-        margin-bottom: 6px;
+        margin-bottom: 4px;
         line-height: 1.4;
       }
 
       .skills-category strong {
         font-size: 10pt;
         font-weight: bold;
-        color: #000000;
+        color: var(--primary-dark);
         display: inline-block;
       }
 
       .skills-list {
         font-size: 10pt;
-        color: #000000;
+        color: var(--text-dark);
       }
 
       /* Experience */
       .exp-item {
         margin-bottom: 12px;
-        page-break-inside: avoid;
       }
 
       .exp-header {
         display: flex;
         justify-content: space-between;
         align-items: baseline;
-        margin-top: 12px;
         margin-bottom: 1px;
       }
 
       .exp-title {
-        font-size: 11pt;
-        font-weight: bold;
-        color: #000000;
+        font-size: 10.5pt;
+        font-weight: 700;
+        color: var(--primary-dark);
+        font-family: "Calibri", sans-serif;
       }
 
       .exp-dates {
-        font-size: 9.5pt;
-        color: #000000;
-        font-weight: normal;
-        white-space: nowrap;
-        margin-left: 10px;
+        font-size: 9pt;
+        color: var(--accent);
+        font-family: "Calibri", sans-serif;
+        font-weight: 600;
       }
 
       .exp-company {
         font-size: 10pt;
         font-style: italic;
-        margin-bottom: 3px;
-        color: #333333;
+        color: var(--text-medium);
+        margin-bottom: 4px;
       }
 
       .exp-details {
-        margin-left: 18px;
-        margin-top: 3px;
+        margin-left: 16px;
         padding-left: 0;
+        font-family: "Calibri", sans-serif;
       }
 
       .exp-details li {
         font-size: 10pt;
-        line-height: 1.35;
+        line-height: 1.4;
         margin-bottom: 2px;
-        text-align: left;
-        color: #000000;
+        color: var(--text-dark);
+      }
+
+      .exp-details li::marker {
+        color: var(--warm);
       }
 
       /* Education */
@@ -162,30 +190,30 @@
 
       .edu-degree {
         font-size: 10.5pt;
-        font-weight: bold;
-        color: #000000;
+        font-weight: 600;
+        color: var(--primary-dark);
+        font-family: "Calibri", sans-serif;
       }
 
       .edu-dates {
-        font-size: 9.5pt;
-        color: #000000;
-        white-space: nowrap;
+        font-size: 9pt;
+        color: var(--accent);
+        font-weight: 500;
       }
 
       .edu-school {
         font-size: 10pt;
-        color: #333333;
+        color: var(--text-medium);
         font-style: italic;
       }
 
-      /* Print optimization */
+      /* Print */
       @media print {
         body {
-          padding: 0.6in 0.7in;
+          padding: 0.5in 0.6in;
         }
       }
 
-      /* Prevent orphaned headers */
       h2 {
         page-break-after: avoid;
       }
