@@ -1,6 +1,7 @@
 {
   "functions": {
     "pages/api/generate.js": {
+      "runtime": "nodejs20.x",
       "maxDuration": 60,
       "memory": 2048
     }
