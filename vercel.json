@@ -2,7 +2,7 @@
   "functions": {
     "pages/api/generate.js": {
       "maxDuration": 60,
-      "memory": 3008
+      "memory": 2048
     }
   },
   "buildCommand": "npm install && npm run build",
