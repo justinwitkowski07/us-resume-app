@@ -1,0 +1,111 @@
+{
+  "name": "Benjamin Van",
+  "email": "van.ben92@outlook.com",
+  "phone": "",
+  "location": "Warsaw, Mazowieckie, Poland",
+  "linkedin": "https://www.linkedin.com/in/benjamin-van-547542397/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Concirrus",
+      "title": "Senior AI Engineer",
+      "location": "London, England",
+      "start_date": "Feb 2022",
+      "end_date": "Present",
+      "details": [
+        "Designed and deployed a multilingual retrieval-augmented generation chatbot using GPT-4, Pinecone vector database, LangChain, and LlamaIndex, which significantly improved semantic search and knowledge retrieval across various data formats."
+      ]
+    },
+    {
+      "company": "Ciklum",
+      "title": "Machine Learning Engineer",
+      "location": "London, England",
+      "start_date": "Feb 2020",
+      "end_date": "Jan 2022",
+      "details": [
+        "Developed and deployed production-grade real-time object detection models using YOLOv5, EfficientDet, and Detectron2, integrated with OpenCV to process video streams for industrial quality inspection systems.",
+        "Achieved a 60% inference speedup on Nvidia Jetson TX2 edge devices through aggressive model pruning, TensorRT quantization, and custom CUDA kernel optimizations tailored for edge deployment.",
+        "Built scalable FastAPI inference services deployed on Kubernetes clusters managed with Helm charts, enabling zero-downtime rolling updates and autoscaling based on real-time load.",
+        "Automated model retraining workflows using Apache Airflow, integrating DVC and MLflow for dataset and experiment versioning to ensure reproducibility and traceability.",
+        "Designed advanced monitoring dashboards with Grafana and Prometheus to track inference latency, accuracy drift, and edge device resource utilization, enabling proactive system maintenance.",
+        "Developed complex image augmentation pipelines using Albumentations, significantly improving model robustness against varying lighting, noise, and occlusions.",
+        "Integrated MQTT protocols for real-time anomaly detection alerting and telemetry across distributed edge devices, enhancing system reliability.",
+        "Mentored junior engineers and contributed extensive documentation covering computer vision model development, deployment pipelines, and troubleshooting guides.",
+        "Collaborated closely with embedded systems teams to optimize model deployment on resource-constrained devices, balancing inference throughput and power consumption.",
+        "Utilized PyTorch, TensorFlow, and OpenVINO frameworks for efficient model training, conversion, and deployment workflows.",
+        "Automated CI/CD pipelines leveraging GitHub Actions to validate model builds and container images, improving deployment reliability."
+      ]
+    },
+    {
+      "company": "Haravan",
+      "title": "Machine Learning Engineer",
+      "location": "Hochiminh City, Vietnam",
+      "start_date": "Jul 2017",
+      "end_date": "Dec 2019",
+      "details": [
+        "Developed and deployed robust fraud detection systems utilizing LightGBM, XGBoost, and CatBoost, processing transactional and behavioral data to significantly reduce false positive rates.",
+        "Engineered temporal and aggregated features through optimized SQL queries and Apache Spark pipelines, enabling near real-time fraud risk scoring.",
+        "Applied advanced NLP techniques, including LDA topic modeling, BERT finetuning, and sentence embeddings, to extract actionable insights from customer support tickets and communications.",
+        "Built RESTful APIs with Flask to serve real-time fraud alerts and model predictions, integrated with existing CRM platforms for seamless operations.",
+        "Managed the end-to-end ML lifecycle using MLflow, securely storing artifacts in AWS S3 for reproducible experiments and model governance.",
+        "Created interactive visualizations using Tableau and Plotly to communicate model performance metrics and business impacts to stakeholders clearly.",
+        "Conducted rigorous A/B testing and statistical analysis to validate model improvements and quantify impacts on customer churn prediction and fraud prevention.",
+        "Automated feature engineering pipelines with Apache Airflow and optimized SQL to streamline data preparation and model training processes.",
+        "Trained and mentored junior data scientists on model explainability tools such as SHAP, LIME, and ELI5 to increase transparency and trust in ML models.",
+        "Delivered over 20% increase in fraud detection precision, substantially reducing manual review workload and improving operational efficiency."
+      ]
+    },
+    {
+      "company": "VentureCraft",
+      "title": "Data Scientist",
+      "location": "Singapore",
+      "start_date": "Feb 2016",
+      "end_date": "Mar 2017",
+      "details": [
+        "Built recommendation systems employing collaborative filtering, matrix factorization, and hybrid models to personalize e-learning content delivery and enhance user engagement.",
+        "Improved spam filtering accuracy by 30% through feature engineering and implementation of logistic regression and Naive Bayes classifiers in Python.",
+        "Developed and deployed Flask RESTful APIs to integrate ML models with frontend and mobile applications, enabling seamless end-user experiences.",
+        "Automated web scraping and data preprocessing pipelines using BeautifulSoup, Selenium, and Pandas for cleaning and transforming raw datasets for analysis.",
+        "Managed relational PostgreSQL and NoSQL MongoDB databases to support user interaction analytics and behavioral data processing.",
+        "Implemented foundational NLP pipelines using NLTK and spaCy for tokenization, named entity recognition, and normalization tasks critical to downstream applications.",
+        "Containerized ML workflows and services with Docker, ensuring consistent development environments and facilitating cloud deployment.",
+        "Collaborated with frontend teams to embed ML model outputs into interactive dashboards, significantly enhancing user engagement and insight delivery.",
+        "Actively participated in sprint planning, code reviews, and testing to maintain high-quality project delivery and ensure robustness.",
+        "Supported migration of ML workloads to AWS EC2 instances, developing batch inference jobs to enable offline model predictions."
+      ]
+    },
+    {
+      "company": "TMA Solutions",
+      "title": "Data Analyst",
+      "location": "Vietnam",
+      "start_date": "Mar 2015",
+      "end_date": "Nov 2015",
+      "details": [
+        "Conducted exploratory data analysis on customer behavior datasets using Pandas and Excel, identifying key marketing trends and actionable patterns to inform business decisions.",
+        "Automated report generation through Python scripting and Excel macros, reducing manual workload and improving reporting efficiency.",
+        "Developed data cleaning pipelines leveraging Pandas to prepare raw data for modeling and statistical analysis.",
+        "Assisted in building basic customer segmentation predictive models under guidance, contributing to marketing campaign targeting efforts.",
+        "Documented data processing pipelines and analytical methodologies to ensure reproducibility and promote knowledge sharing within the team.",
+        "Conducted root cause analysis and validation to address data quality issues and ensure reliability of datasets used for business intelligence.",
+        "Supported ad hoc data requests and prepared visual reports for internal stakeholders, facilitating data-driven decision making.",
+        "Actively contributed ideas in team brainstorming sessions to improve data infrastructure and workflows."
+      ]
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master’s in Artificial Intelligence & Data Science",
+      "school": "University of Hertfordshire",
+      "start_year": "2018",
+      "end_year": "2020"
+    },
+        {
+      "degree": "Bachelor's degree, Computer Engineering",
+      "school": "Vietnam National University, Hanoi",
+      "start_year": "2011",
+      "end_year": "2015"
+    }
+  ]
+}
