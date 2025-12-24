@@ -11,22 +11,32 @@
       "company": "Vortax LLC",
       "title": "WordPress & E-commerce Developer",
       "location": "Essex, Maryland",
-      "start_date": "03/2018 ",
-      "end_date": "Present"
+      "start_date": "03/2018",
+      "end_date": "Present",
+      "details": [
+        "Developed WordPress Network/Multisite consisting of approximately 30 sites and conducted routine Operations & Maintenance, including updating and maintaining."
+      ]
     },
     {
       "company": "Nativz",
       "title": "Expert WordPress Developer",
       "location": "Dallas, TX",
       "start_date": "01/2017",
-      "end_date": "02/2018"
+      "end_date": "02/2018",
+      "details": [
+        "I have worked with small to medium-sized businesses across a wide range of industries."
+      ]
     },
     {
       "company": "Lounge Lizard Worldwide, Inc. - NYC Digital Agency",
       "title": "WordPress Developer",
       "location": "New York, NY",
       "start_date": "03/2016",
-      "end_date": "01/2017"
+      "end_date": "01/2017",
+      "details": [
+        "Develops and manages organizational E-commerce and Wordpress websites to meet goals involving e-business strategies.",
+        "Being an E-Business Developer, create responsive storefront web designs and themes that enable customers to successfully engage with the platform with optimized scalability and SEO capabilities."
+      ]
     }
   ],
   
