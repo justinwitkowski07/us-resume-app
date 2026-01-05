@@ -1,0 +1,61 @@
+{
+  "name": "Taylor Maines",
+  "email": "taylor.maines07@outlook.com",
+  "phone": "+1 (325) 313-0789",
+  "location": "Mary Esther, Florida, United States",
+  "linkedin": "https://www.linkedin.com/in/taylormaines/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "The START Center for Cancer Research",
+      "title": "Senior Software Engineer",
+      "location": "San Antonio, Texas",
+      "start_date": "Aug 2025",
+      "end_date": "Present"
+    },
+    {
+      "company": "The START Center for Cancer Research",
+      "title": "Full Stack Software Engineer",
+      "location": "San Antonio, Texas",
+      "start_date": "May 2022",
+      "end_date": "Aug 2025"
+    },
+    {
+      "company": "QuantiTech",
+      "title": "Senior Software Engineer",
+      "location": "Eglin Air Force Base, Florida",
+      "start_date": "Nov 2020",
+      "end_date": "Oct 2021"
+    },
+    {
+      "company": "Odyssey Systems",
+      "title": "Engineer 2",
+      "location": "Eglin Air Force Base, Florida",
+      "start_date": "Apr 2019",
+      "end_date": "Nov 2020"
+    },
+    {
+      "company": "BAE Systems",
+      "title": "Software Engineer I",
+      "location": "Fort Walton Beach, FL",
+      "start_date": "Jan 2012",
+      "end_date": "Apr 2019"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master of Science (M.S.), Computer Science",
+      "school": "University of West Florida",
+      "start_year": "2014",
+      "end_year": "2015"
+    },
+        {
+      "degree": "Bachelors of Science Degree, Information Technology",
+      "school": "Florida State University",
+      "start_year": "2007",
+      "end_year": "2012"
+    }
+  ]
+}
