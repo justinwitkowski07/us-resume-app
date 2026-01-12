@@ -8,6 +8,13 @@
   
   "experience": [
     {
+      "company": "The Simple Vue",
+      "title": "Senior Full Stack Engineer",
+      "location": "Georgia, US",
+      "start_date": "Present",
+      "end_date": "October 2025"
+    },
+    {
       "company": "GridGain",
       "title": "Senior Full Stack Engineer",
       "location": "California, US",
