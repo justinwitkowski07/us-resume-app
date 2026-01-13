@@ -1,0 +1,92 @@
+{
+  "name": "Christopher Cassion",
+  "email": "christopher.cassion05@outlook.com",
+  "phone": "+1 (737) 277-5671",
+  "location": "San Jose, California, United States",
+  "linkedin": "https://www.linkedin.com/in/christopher-cassion-61788028/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "CodeRabbit",
+      "title": "Senior AI Engineer",
+      "location": "Walnut Creek, California",
+      "start_date": "05/2025",
+      "end_date": "Present"
+    },
+    {
+      "company": "WaveAI",
+      "title": "Co-Founder | VP, Eng | ML Engineer",
+      "location": "Sunnyvale, California",
+      "start_date": "08/2018",
+      "end_date": "04/2025",
+      "details": [
+        "Designed and built end-to-end ML pipelines, from training and feature engineering to evaluation and production deployment.",
+        "Applied both supervised and unsupervised learning techniques, including large language models (LLMs) with Transformers, as well as Random Forests, boosting methods, linear regression, and RNN/LSTMs.",
+        "Fine-tuned and adapted pre-trained models for specialized tasks",
+        "Transformed research ideas into MVPs and successfully deployed them to production.",
+        "Designed and built fault-tolerant microservices on GCP using NodeJS/TypeScript, with asynchronous architectures and low-latency APIs for scalable, secure solutions.",
+        "Provided technical leadership to a small team of engineers",
+        "Python, Tensorflow, Natural Language Processing (NLP), Docker, Javascript, Git, Firebase, Google Cloud (GCP), AWS, NoSQL, Spark, CI/CD, A/B testing"
+      ]
+    },
+    {
+      "company": "Google",
+      "title": "Software Engineer Intern",
+      "location": "San Francisco, California",
+      "start_date": "05/2018",
+      "end_date": "08/2018",
+      "details": [
+        "Developed an ML framework leveraging explainable AI (XAI) techniques to extract insights from large-scale Google Fi datasets.",
+        "Conducted an in-depth analysis of masked data, identified key predictive features and presented findings to the ML team.",
+        "Python, data analysis, A/B Testing, Random Forrest"
+      ]
+    },
+    {
+      "company": "IBM",
+      "title": "Research Intern",
+      "location": "Austin, Texas Area",
+      "start_date": "05/2017",
+      "end_date": "08/2017",
+      "details": [
+        "Modernized and validated open-source ML solutions to address projectspecific challenges by retraining models, and upgrading codebases.",
+        "Assessed and benchmarked solution effectiveness against project goals, providing analysis of results to the lead researcher",
+        "Python, Open-sourced projects, Signal Processing, CNNs, Image Recognition"
+      ]
+    },
+    {
+      "company": "Georgia Institute of Technology",
+      "title": "Graduate Teaching Assistant",
+      "location": "Atlanta, Georgia",
+      "start_date": "08/2016",
+      "end_date": "04/2017"
+    },
+    {
+      "company": "Humana",
+      "title": "Application Engineer Intern",
+      "location": "Louisville, Kentucky Area",
+      "start_date": "05/2015",
+      "end_date": "08/2016",
+      "details": [
+        "Implemented .NET applications for the Medicare and Medicaid support teams",
+        "Leveraged SQL to organize and optimize on-the-ground agent onboarding experience.",
+        "Prototyped a platform upgrade for the Medicare team's new elderly client onboarding to leverage Humana and Government approved security patches."
+      ]
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master's degree, Computer Science",
+      "school": "Georgia Institute of Technology",
+      "start_year": "2016",
+      "end_year": "2018"
+    },
+    {
+      "degree": "Bachelors of Science, Computer Science",
+      "school": "Florida State University",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}
