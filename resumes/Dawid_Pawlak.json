@@ -1,0 +1,87 @@
+{
+  "name": "Dawid Pawlak",
+  "email": "dawid.pawlak001@outlook.com",
+  "phone": "",
+  "location": "Poznań, Greater Poland, Poland",
+  "linkedin": "https://www.linkedin.com/in/dawid-pawlak-6495983a2/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "The Simple Vue",
+      "title": "Senior Software Engineer",
+      "location": "Georgia, US",
+      "start_date": "Feb 2023",
+      "end_date": "Present",
+      "details": [
+        "Designed and implemented a multi-tenant SaaS analytics platform serving 50,000+ enterprise users and 10TB+ of real-time data.",
+        "Architected a distributed microservices ecosystem to improve reliability and reduce latency by 47% during peak usage.",
+        "Introduced a federated data gateway improving query efficiency and reducing over-fetching by 30%.",
+        "Automated infrastructure provisioning using containerized pipelines and infrastructure-as-code, cutting setup time from hours to minutes.",
+        "Integrated asynchronous processing and monitoring pipelines, improving throughput while lowering compute costs by 25%.",
+        "Championed a performance optimization initiative that reduced query times by 60% and improved overall responsiveness.",
+        "Partnered with data scientists to embed AI-driven anomaly detection into analytics workflows, enhancing issue discovery by 45%.",
+        "Mentored engineers on architectural principles, documentation, and version control best practices to improve cross-team efficiency."
+      ]
+    },
+    {
+      "company": "Nityo Infotech",
+      "title": "Senior Software Engineer",
+      "location": "Berkshire, UK",
+      "start_date": "Jul 2020",
+      "end_date": "Dec 2022",
+      "details": [
+        "Led the modernization of a large-scale fintech platform, transitioning from a monolithic system to a microservice-based architecture supporting 100K+ active users.",
+        "Improved system scalability, reliability, and SEO performance through serverside rendering and dynamic caching.",
+        "Developed a real-time financial dashboard delivering millisecond-level data updates and 99.98% uptime.",
+        "Implemented domain-driven design principles to enhance modularity, security, and deployment independence.",
+        "Introduced fully automated CI/CD pipelines ensuring zero-downtime deployments and standardized release practices.",
+        "Designed centralized observability and tracing tools, reducing incident resolution time by 90%.",
+        "Strengthened system security and compliance with GDPR and SOC2 requirements through fine-grained access control.",
+        "Championed test automation and QA pipelines, increasing test coverage to 95% and reducing production incidents by 40%."
+      ]
+    },
+    {
+      "company": "Jig Technologies",
+      "title": "Software Developer",
+      "location": "Toronto, Canada",
+      "start_date": "Feb 2018",
+      "end_date": "Jun 2020",
+      "details": [
+        "Developed a logistics management system used by 30K+ daily users, improving routing efficiency and delivery performance by 28%.",
+        "Optimized database performance and query execution, reducing load times by 70%.",
+        "Enhanced data processing pipelines and asynchronous task handling, increasing throughput by 37%.",
+        "Implemented monitoring dashboards and SLA-driven metrics, improving operational transparency and client satisfaction by 32%.",
+        "Automated deployment processes, cutting manual operations by 85% and ensuring consistent delivery cycles."
+      ]
+    },
+    {
+      "company": "Espeo Software",
+      "title": "Junior Web Developer",
+      "location": "Poznań, Poland",
+      "start_date": "Jul 2016",
+      "end_date": "Jan 2018",
+      "details": [
+        "Contributed to the development of a large-scale social networking platform supporting over 1 million users.",
+        "Improved user experience and responsiveness through interface optimization and caching strategies.",
+        "Assisted in backend tuning and API performance improvements to enhance scalability.",
+        "Participated in Agile ceremonies and design discussions, building strong engineering discipline early in career."
+      ]
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master's degree, Information Technology",
+      "school": "Poznan University of Technology",
+      "start_year": "2016",
+      "end_year": "2018"
+    },
+        {
+      "degree": "Bachelor of Science (B.S.), Computer Science",
+      "school": "Poznan University of Technology",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}
