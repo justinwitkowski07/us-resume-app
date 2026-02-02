@@ -1,11 +1,11 @@
 import chromium from "@sparticuz/chromium";
 import puppeteerCore from "puppeteer-core";
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 import Handlebars from "handlebars";
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const getLocalChromeExecutablePath = () => {
   if (process.env.PUPPETEER_EXECUTABLE_PATH) return process.env.PUPPETEER_EXECUTABLE_PATH;
@@ -178,59 +178,62 @@ const loadProfile = (profileName) => {
   return profileData;
 };
 
-// Call Claude with timeout & retries
-async function callClaude(promptOrMessages, model = null, maxTokens = 8192, retries = 2, timeoutMs = 90000) {
+// Call OpenAI with timeout & retries
+async function callOpenAI(promptOrMessages, model = null, maxTokens = 8192, retries = 2, timeoutMs = 180000) {
   while (retries > 0) {
     try {
-      if (!process.env.ANTHROPIC_API_KEY) {
-        throw new Error("Missing ANTHROPIC_API_KEY");
+      if (!process.env.OPENAI_API_KEY) {
+        throw new Error("Missing OPENAI_API_KEY");
       }
 
-      // Handle both string prompts and message arrays
-      let messages;
-      let systemPrompt = null;
+      // Build messages for OpenAI Chat Completions
+      let messages = [];
 
       if (typeof promptOrMessages === "string") {
         messages = [{ role: "user", content: promptOrMessages }];
       } else if (Array.isArray(promptOrMessages)) {
         const systemMsg = promptOrMessages.find((msg) => msg.role === "system");
         if (systemMsg) {
-          if (Array.isArray(systemMsg.content)) {
-            systemPrompt = systemMsg.content
-              .map((part) => (typeof part === "string" ? part : part?.text || ""))
-              .join("\n");
-          } else {
-            systemPrompt = systemMsg.content;
-          }
+          const systemContent = Array.isArray(systemMsg.content)
+            ? systemMsg.content.map((part) => (typeof part === "string" ? part : part?.text || "")).join("\n")
+            : systemMsg.content;
+          messages.push({ role: "system", content: systemContent });
         }
-
-        messages = promptOrMessages
+        const rest = promptOrMessages
           .filter((msg) => msg.role !== "system")
           .map((msg) => ({
             role: msg.role === "assistant" ? "assistant" : "user",
             content: typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content),
           }));
+        messages.push(...rest);
       } else {
         messages = [{ role: "user", content: String(promptOrMessages) }];
       }
 
       const apiParams = {
-        model: model || process.env.ANTHROPIC_MODEL || "claude-3-haiku-20240307",
-        max_tokens: maxTokens,
+        model: model || process.env.OPENAI_MODEL || "gpt-5-mini",
+        max_completion_tokens: maxTokens,
         temperature: 1,
         messages,
       };
 
-      if (systemPrompt) {
-        apiParams.system = systemPrompt;
-      }
-
-      return await Promise.race([
-        anthropic.messages.create(apiParams),
+      const completion = await Promise.race([
+        openai.chat.completions.create(apiParams),
         new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Anthropic request timed out")), timeoutMs)
+          setTimeout(() => reject(new Error("OpenAI request timed out")), timeoutMs)
         ),
       ]);
+
+      // Normalize to a shape similar to Anthropic response for downstream code
+      const choice = completion.choices?.[0];
+      return {
+        content: [{ type: "text", text: choice?.message?.content ?? "" }],
+        stop_reason: choice?.finish_reason ?? "stop",
+        usage: completion.usage
+          ? { input_tokens: completion.usage.prompt_tokens, output_tokens: completion.usage.completion_tokens }
+          : undefined,
+        model: completion.model,
+      };
     } catch (err) {
       retries--;
       if (retries === 0) throw err;
@@ -243,10 +246,10 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).send("Method not allowed");
 
   try {
-    console.log("Anthropic config:", {
-      hasApiKey: Boolean(process.env.ANTHROPIC_API_KEY),
-      apiKeyLength: process.env.ANTHROPIC_API_KEY ? process.env.ANTHROPIC_API_KEY.length : 0,
-      model: process.env.ANTHROPIC_MODEL || "claude-3-haiku-20240307",
+    console.log("OpenAI config:", {
+      hasApiKey: Boolean(process.env.OPENAI_API_KEY),
+      apiKeyLength: process.env.OPENAI_API_KEY ? process.env.OPENAI_API_KEY.length : 0,
+      model: process.env.OPENAI_MODEL || "gpt-5-mini",
     });
 
     const { profile, jd, company, role } = req.body;
@@ -429,10 +432,10 @@ ${jd}
 **OUTPUT:** ONLY valid JSON: {"title":"...","summary":"...","skills":{"Category":["Skill1","Skill2"]},"experience":[{"title":"...","details":["bullet1","bullet2"]}]}
 `;
 
-    const aiResponse = await callClaude(prompt);
+    const aiResponse = await callOpenAI(prompt);
     
     // Log token usage to debug if we're hitting limits
-    console.log("Anthropic API Response Metadata:");
+    console.log("OpenAI API Response Metadata:");
     console.log("- Model:", aiResponse.model);
     const finishReason = aiResponse.stop_reason;
     console.log("- Stop reason:", finishReason);
@@ -440,8 +443,8 @@ ${jd}
     console.log("- Output tokens:", aiResponse.usage?.output_tokens);
     
     let content;
-    if (finishReason === 'max_tokens') {
-      console.error("⚠️ WARNING: Claude hit the max_tokens limit! Response was truncated.");
+    if (finishReason === 'length') {
+      console.error("⚠️ WARNING: OpenAI hit the max_tokens limit! Response was truncated.");
       console.log("🔄 Retrying with reduced requirements to fit in token limit...");
       
       // Retry with a more concise prompt
@@ -451,7 +454,7 @@ ${jd}
         .replace(/6 bullets each/g, '5 bullets each')
         .replace(/5-6 bullets per job/g, '4-5 bullets per job');
       
-      const retryResponse = await callClaude(concisePrompt);
+      const retryResponse = await callOpenAI(concisePrompt);
       console.log("Retry Response Metadata:");
       console.log("- Stop reason:", retryResponse.stop_reason);
       console.log("- Output tokens:", retryResponse.usage?.output_tokens);
@@ -653,8 +656,8 @@ ${jd}
       return res
         .status(500)
         .send(
-          "PDF generation failed: Anthropic returned 403 Forbidden (Request not allowed). " +
-            "Check that ANTHROPIC_API_KEY is set correctly for this environment and that your Anthropic account/key has access to the configured model. " +
+          "PDF generation failed: OpenAI returned 403 Forbidden (Request not allowed). " +
+            "Check that OPENAI_API_KEY is set correctly for this environment and that your OpenAI account/key has access to the configured model. " +
             (apiMessage ? `Details: ${apiMessage}` : "")
         );
     }

@@ -8,10 +8,10 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 20.11.0
-      - key: ANTHROPIC_API_KEY
+      - key: OPENAI_API_KEY
         sync: false
-      - key: ANTHROPIC_MODEL
-        value: claude-3-haiku-20240307
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
       - key: NODE_ENV
         value: production
 

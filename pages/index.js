@@ -306,7 +306,7 @@ export default function Home() {
         {/* Footer */}
         <div style={footerStyle}>
           <p style={{ margin: 0 }}>
-            Powered by Anthropic Claude • ATS Score: 95-100%
+            Powered by OpenAI GPT • ATS Score: 95-100%
           </p>
         </div>
       </div>
