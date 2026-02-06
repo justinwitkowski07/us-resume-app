@@ -1,0 +1,78 @@
+{
+  "name": "Piotr Nowak",
+  "email": "piotr.nowak001@outlook.com",
+  "phone": "",
+  "location": "Lublin, Poland",
+  "linkedin": "https://www.linkedin.com/in/piotr-nowak-571b6339b/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "PuzzleHR",
+      "title": "Senior Lead Software Engineer",
+      "location": "Florida, US",
+      "start_date": "September 2023",
+      "end_date": "Present",
+      "details": [
+        "Architected a multi-tenant data intelligence platform delivering real-time analytics with sub-second response times while reducing infrastructure costs by 35% through cloud resource optimization.",
+        "Designed and implemented AI-powered automation workflows for smart document processing and predictive data insights, cutting manual review time by 60%.",
+        "Delivered a highly reliable, microservices-based backend with automated CI/CD pipelines ensuring 99.9% deployment success.",
+        "Improved web performance and SEO visibility by 45% through server-side rendering, caching strategies, and performance audits.",
+        "Collaborated with data science teams to implement real-time recommendation systems achieving latency under 150ms.",
+        "Introduced robust testing and monitoring frameworks, raising automated test coverage to 92% and reducing production issues.",
+        "Mentored six engineers on modular architecture, best practices, and agile workflows, boosting sprint velocity by 28%."
+      ]
+    },
+    {
+      "company": "Systemagic",
+      "title": "Senior Software Engineer",
+      "location": "Wiltshire, England",
+      "start_date": "March 2019",
+      "end_date": "August 2023",
+      "details": [
+        "Led development of enterprise-scale platforms serving over 100K monthly active users, improving customer retention by 32%.",
+        "Spearheaded modernization of legacy monolithic systems into distributed, service-oriented architecture, enhancing maintainability and deployment reliability.",
+        "Designed and enforced secure authentication and role-based access control, aligning with enterprise-grade compliance standards.",
+        "Implemented asynchronous data pipelines for real-time synchronization across distributed services.",
+        "Automated deployment processes, reducing rollout times from hours to minutes through CI/CD orchestration.",
+        "Collaborated with UX and product teams to deliver accessible, highperforming user experiences across devices."
+      ]
+    },
+    {
+      "company": "Innowise Group",
+      "title": "Software Engineer",
+      "location": "Warsaw, Poland",
+      "start_date": "June 2017",
+      "end_date": "February 2019",
+      "details": [
+        "Delivered large-scale eCommerce and logistics solutions supporting millions of transactions monthly with 99.98% uptime.",
+        "Integrated intelligent systems such as chatbots and recommendation engines to boost user engagement by 30%.",
+        "Enhanced frontend performance with modular architecture and advanced caching, reducing average load times by over 2 seconds.",
+        "Developed robust APIs enabling seamless integration with external platforms and mobile clients.",
+        "Implemented containerized deployment pipelines improving environment consistency and scalability."
+      ]
+    },
+    {
+      "company": "EMBIQ",
+      "title": "Web Application Developer",
+      "location": "Lublin, Poland",
+      "start_date": "July 2016",
+      "end_date": "June 2017",
+      "details": [
+        "Developed SaaS analytics dashboards and data visualization tools for enterprise clients in finance and logistics.",
+        "Automated data ingestion and transformation workflows, reducing ETL processing time by 45%.",
+        "Managed cloud-based deployments and infrastructure-as-code environments, improving scalability and resilience.",
+        "Implemented automated testing frameworks and accessibility best practices, increasing reliability and usability."
+      ]
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science - BS, Computer Science",
+      "school": "Lublin University of Technology",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}
