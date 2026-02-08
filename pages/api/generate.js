@@ -102,21 +102,6 @@ const calculateYears = (experience) => {
   return Math.round(years);
 };
 
-// Move constants outside handler
-const hybridKeywords = [
-  'hybrid', 'hybrid work', 'hybrid model', 'hybrid schedule',
-  'days in office', 'days per week in office', 'in-office days',
-  'office presence', 'some days in office'
-];
-
-const onsiteKeywords = [
-  'on-site', 'onsite', 'on site', 'in-office', 'in office',
-  'office based', 'office-based', 'must be located in',
-  'must be based in', 'must relocate', 'relocation required',
-  'physical presence required', 'in person', 'local candidates',
-  'candidates must be in', 'candidates must reside'
-];
-
 // Cache template compilation
 const templateCacheByPath = new Map();
 
@@ -258,56 +243,6 @@ export default async function handler(req, res) {
     if (!jd) return res.status(400).send("Job description required");
     if (!company) return res.status(400).send("Company name required");
     if (!role) return res.status(400).send("Role name required");
-
-    // **NEW: Check if job is remote or hybrid/onsite**
-    console.log("Checking job location type...");
-    const jdLower = jd.toLowerCase();
-    
-    // Check for hybrid indicators
-    const isHybrid = hybridKeywords.some(keyword => jdLower.includes(keyword));
-    
-    // Check for onsite indicators (but exclude if "remote" is also mentioned strongly)
-    const hasOnsiteKeywords = onsiteKeywords.some(keyword => jdLower.includes(keyword));
-    const hasRemoteKeywords = jdLower.includes('remote') || jdLower.includes('work from home') || 
-                               jdLower.includes('fully remote') || jdLower.includes('100% remote') ||
-                               jdLower.includes('remote-first') || jdLower.includes('distributed team');
-    const hasJuniorKeywords = jdLower.includes('junior role') || jdLower.includes('entry level') ||
-                               jdLower.includes('entry-level');
-    
-    const hasInternKeywords = jdLower.includes(' intern ') || jdLower.includes('internship');
-
-    const isJunior = hasJuniorKeywords && !hasInternKeywords;
-    const isIntern = hasInternKeywords && !hasJuniorKeywords;
-    const isEntryLevel = isJunior || isIntern;
-
-    // Determine if it's truly onsite (has onsite keywords but not strong remote indicators)
-    const isOnsite = hasOnsiteKeywords && !hasRemoteKeywords;
-    
-    if (isHybrid) {
-      console.log("❌ Job is HYBRID - Rejecting");
-      return res.status(400).json({ 
-        error: "This position is HYBRID (requires some office days). This tool is designed for REMOTE-ONLY positions. Please provide a fully remote job description.",
-        locationType: "hybrid"
-      });
-    }
-    
-    if (isOnsite) {
-      console.log("❌ Job is ONSITE - Rejecting");
-      return res.status(400).json({ 
-        error: "This position is ONSITE/IN-PERSON. This tool is designed for REMOTE-ONLY positions. Please provide a fully remote job description.",
-        locationType: "onsite"
-      });
-    }
-
-    if (isEntryLevel) {
-      console.log("❌ Job is ENTRY LEVEL - Rejecting");
-      return res.status(400).json({ 
-        error: "This position is ENTRY LEVEL. This tool is designed for MID-LEVEL and SENIOR positions. Please provide a more senior job description.",
-        locationType: "entry-level"
-      });
-    }
-    
-    console.log("✅ Job appears to be REMOTE - Proceeding");
 
     // Load profile JSON (using cache)
     console.log(`Loading profile: ${profile}`);
