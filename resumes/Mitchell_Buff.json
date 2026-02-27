@@ -1,0 +1,68 @@
+{
+  "name": "Mitchell Buff",
+  "email": "mitchell.buff08@outlook.com",
+  "phone": "+1 (325) 866-1910",
+  "location": "Atlanta, Georgia, United States",
+  "linkedin": "https://www.linkedin.com/in/mitchell-b-5160693a5/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Seekr",
+      "title": "Sr. Artificial Intelligence Engineer",
+      "location": "Atlanta, Georgia",
+      "start_date": "10/2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "State Farm",
+      "title": "Sr. Machine Learning Engineer",
+      "location": "Atlanta, Georgia",
+      "start_date": "11/2023",
+      "end_date": "10/2024"
+    },
+    {
+      "company": "State Farm",
+      "title": "Machine Learning Engineer",
+      "location": "Atlanta, Georgia",
+      "start_date": "01/2022",
+      "end_date": "11/2023"
+    },
+    {
+      "company": "State Farm",
+      "title": "Machine Learning Engineer Intern",
+      "location": "Atlanta, Georgia",
+      "start_date": "08/2021",
+      "end_date": "01/2022"
+    },
+    {
+      "company": "State Farm",
+      "title": "Modeling and Analytics Graduate Network (MAGNet) Intern",
+      "location": "Atlanta, Georgia",
+      "start_date": "08/2020",
+      "end_date": "08/2021"
+    },
+    {
+      "company": "SNAP APPS",
+      "title": "Mobile Application Developer",
+      "location": "Atlanta, Georgia",
+      "start_date": "12/2018",
+      "end_date": "08/2020"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master's degree, Computer Science",
+      "school": "The University of Georgia",
+      "start_year": "2020",
+      "end_year": "2021"
+    },
+    {
+      "degree": "Bachelor's degree, Computer Science",
+      "school": "The University of Georgia",
+      "start_year": "2016",
+      "end_year": "2020"
+    }
+  ]
+}
