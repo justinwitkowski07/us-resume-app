@@ -99,7 +99,7 @@ const calculateYears = (experience) => {
   }, validDates[0]);
   
   const years = (new Date() - earliest) / (1000 * 60 * 60 * 24 * 365);
-  return Math.round(years);
+  return Math.max(8, Math.round(years));
 };
 
 // Cache template compilation
@@ -252,7 +252,7 @@ export default async function handler(req, res) {
       return res.status(404).send(`Profile "${profile}" not found`);
     }
 
-    const yearsOfExperience = calculateYears(profileData.experience) - 1;
+    const yearsOfExperience = Math.max(8, calculateYears(profileData.experience) - 1);
 
     // AI PROMPT: Generate ATS-optimized resume content as JSON (optimized - more concise)
     const prompt = `ATS optimization expert. Generate resume JSON: {"title":"...","summary":"...","skills":{...},"experience":[...]}
