@@ -1,0 +1,48 @@
+{
+  "name": "Norbert Van",
+  "email": "norbert.van.work@proton.me",
+  "phone": "",
+  "location": "Rzeszów, Podkarpackie, Poland",
+  "linkedin": "https://www.linkedin.com/in/norbert-van-417796394/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Kiggla",
+      "title": "Senior Full Stack Software Engineer",
+      "location": "Florida, United States",
+      "start_date": "09/2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Seedium",
+      "title": "Senor Full Stack Engineer",
+      "location": "Tallinn, Estonia",
+      "start_date": "09/2022",
+      "end_date": "08/2024"
+    },
+    {
+      "company": "PuzzleHR",
+      "title": "Full Stack Engineer",
+      "location": "Florida, United States",
+      "start_date": "10/2018",
+      "end_date": "08/2022"
+    },
+    {
+      "company": "Uptime Development A/S",
+      "title": "Web Developer",
+      "location": "Vejle, Denmark",
+      "start_date": "09/2015",
+      "end_date": "09/2018"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's degree in Computer Science",
+      "school": "Hue University of Sciences",
+      "start_year": "2011",
+      "end_year": "2015"
+    }
+  ]
+}
