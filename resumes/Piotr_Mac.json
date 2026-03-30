@@ -1,0 +1,48 @@
+{
+  "name": "Piotr Mac",
+  "email": "mpiotr28@outlook.com",
+  "phone": "",
+  "location": "Poznan, Wielkopolskie, Poland",
+  "linkedin": "https://www.linkedin.com/in/piotr-mac-841260393/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "emagine",
+      "title": "Senior Full Stack Engineer",
+      "location": "Copenhagen, Denmark",
+      "start_date": "Sep 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Apadmi",
+      "title": "Software Engineer",
+      "location": "Manchester, UK",
+      "start_date": "Apr 2021",
+      "end_date": "Aug 2024"
+    },
+    {
+      "company": "Qualco Technology",
+      "title": "Full Stack Developer",
+      "location": "Athens, Greece",
+      "start_date": "Jun 2018",
+      "end_date": "Mar 2021"
+    },
+    {
+      "company": "TinhVan Outsourcing Vietnam",
+      "title": "Junior Full Stack Developer",
+      "location": "Vietnam",
+      "start_date": "Jan 2017",
+      "end_date": "May 2018"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's Degree, Computer Science",
+      "school": "Vietnam Maritime University",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}
