@@ -1,0 +1,61 @@
+{
+  "name": "Peter Bień",
+  "email": "peterbien99@outlook.com",
+  "phone": "",
+  "location": "Rzeszów, Podkarpackie, Poland",
+  "linkedin": "https://www.linkedin.com/in/peter-bie%C5%84-ab1587328/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Stripe",
+      "title": "Lead Data Engineer",
+      "location": "San Francisco, California, USA",
+      "start_date": "Jan 2022",
+      "end_date": "Present"
+    },
+    {
+      "company": "Segment",
+      "title": "Senior Data Engineer",
+      "location": "San Francisco, California, USA",
+      "start_date": "Mar 2020",
+      "end_date": "Dec 2021"
+    },
+    {
+      "company": "Monzo",
+      "title": "Data Platform Engineer",
+      "location": "London, England, UK",
+      "start_date": "Jun 2018",
+      "end_date": "Feb 2020"
+    },
+    {
+      "company": "Grab",
+      "title": "Data Engineer",
+      "location": "Vietnam",
+      "start_date": "Jul 2015",
+      "end_date": "Mar 2018"
+    },
+    {
+      "company": "TIKI",
+      "title": "Data Analyst Intern",
+      "location": "Vietnam",
+      "start_date": "Jun 2013",
+      "end_date": "Jun 2015"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master's degree, Data Science",
+      "school": "University of Washington",
+      "start_year": "2020",
+      "end_year": "2022"
+    },
+    {
+      "degree": "Bachelor's degree, Computer Science",
+      "school": "Vietnam National University, Hanoi",
+      "start_year": "2009",
+      "end_year": "2013"
+    }
+  ]
+}
