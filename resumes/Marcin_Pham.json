@@ -1,0 +1,61 @@
+{
+  "name": "Marcin Pham",
+  "email": "marcin.pham01@proton.me",
+  "phone": "",
+  "location": "Rzeszów, Podkarpackie, Poland",
+  "linkedin": "https://www.linkedin.com/in/marcin-pham-9b90a43ba/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "PagerDuty",
+      "title": "Senior QA Engineer",
+      "location": "California, United States",
+      "start_date": "03/2023",
+      "end_date": "Present"
+    },
+    {
+      "company": "Finastra",
+      "title": "QA Lead",
+      "location": "Munich, Germany",
+      "start_date": "04/2021",
+      "end_date": "12/2022"
+    },
+    {
+      "company": "Starling Bank",
+      "title": "Quality Assurance Test Engineer",
+      "location": "London, England",
+      "start_date": "09/2018",
+      "end_date": "02/2021"
+    },
+    {
+      "company": "FPT Telecom",
+      "title": "QA Engineer",
+      "location": "Vietnam",
+      "start_date": "08/2017",
+      "end_date": "07/2018"
+    },
+    {
+      "company": "Viettel Group",
+      "title": "Junior QA Engineer",
+      "location": "Vietnam",
+      "start_date": "07/2016",
+      "end_date": "06/2017"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master of Science in Software Engineering",
+      "school": "University College London",
+      "start_year": "2018",
+      "end_year": "2020"
+    },
+    {
+      "degree": "Bachelor's degree in Computer Science",
+      "school": "Hanoi University of Science and Technology",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}
