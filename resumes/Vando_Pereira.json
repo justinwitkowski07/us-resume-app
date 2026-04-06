@@ -1,0 +1,53 @@
+{
+  "name": "Vando Moura Pereira",
+  "email": "vando.m107@outlook.com",
+  "phone": "",
+  "location": "Pouso Alegre, Minas Gerais, Brazil",
+  "linkedin": "https://www.linkedin.com/in/vando-moura-pereira-406ab0b0/",
+  "website": "",
+  
+  "experience": [
+     {
+      "company": "Nordstrom",
+      "title": "Senior Lead Software Engineer",
+      "location": "Seattle, Washington, United States",
+      "start_date": "Aug 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "dtLabs",
+      "title": "Senior Software Engineer",
+      "location": "Maringá, Paraná, Brazil",
+      "start_date": "Dec 2021",
+      "end_date": "May 2024"
+    },
+    {
+      "company": "Hubstaff",
+      "title": "Software Engineer II",
+      "location": "Fishers, Indiana, United States",
+      "start_date": "Jan 2017",
+      "end_date": "Nov 2021"
+    },   
+    {
+      "company": "Qnet Telecom",
+      "title": "Software Engineer",
+      "location": "Umuarama, Parana, Brazil",
+      "start_date": "Jun 2015",
+      "end_date": "Dec 2016"
+    }
+  ],
+  "education": [
+    {
+      "degree": "Master's degree, Computer Science",
+      "school": "Hodges University",
+      "start_year": "2018",
+      "end_year": "2020"
+    },
+    {
+      "degree": "Bachelor's degree, Computer Science",
+      "school": "Federal University of Technology - Parana",
+      "start_year": "2011",
+      "end_year": "2015"
+    }
+  ]
+}
