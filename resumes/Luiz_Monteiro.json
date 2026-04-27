@@ -1,0 +1,47 @@
+{
+  "name": "Luiz Paulo Monteiro",
+  "email": "lpmonteiro091@outlook.com",
+  "phone": "",
+  "location": "Itajaí, Santa Catarina, Brazil",
+  "linkedin": "https://www.linkedin.com/in/luiz-p-monteiro-074a93400/",
+  "website": "",
+  
+  "experience": [
+     {
+      "company": "Revelo",
+      "title": "Lead Full Stack Engineer",
+      "location": "Florida, United States",
+      "start_date": "Jul 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Vention",
+      "title": "Senior Full Stack Engineer",
+      "location": "New York, United States",
+      "start_date": "Oct 2022",
+      "end_date": "Jun 2024"
+    },
+    {
+      "company": "SOUTH SYSTEM",
+      "title": "Full Stack Engineer",
+      "location": "Porto Alegre, Brazil",
+      "start_date": "Jun 2019",
+      "end_date": "Jul 2022"
+    },   
+    {
+      "company": "Gupy",
+      "title": "Junior Web Developer",
+      "location": "São Paulo, Brazil",
+      "start_date": "Nov 2016",
+      "end_date": "May 2019"
+    }
+  ],
+  "education": [
+    {
+      "degree": "Bachelor's degree, Information Technology",
+      "school": "West Zone State University",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}
