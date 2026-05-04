@@ -1,0 +1,48 @@
+{
+  "name": "Kristian Toledana",
+  "email": "kristian.toledana01@proton.me",
+  "phone": "",
+  "location": "Quezon City, Metro Manila, Philippines",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Nordstrom",
+      "title": "Senior Full Stack Engineer",
+      "location": "United States",
+      "start_date": "Sep 2023",
+      "end_date": "Present"
+    },
+    {
+      "company": "BrightOps",
+      "title": "Full Stack Engineer",
+      "location": "United States",
+      "start_date": "Jun 2021",
+      "end_date": "Jul 2023"
+    },
+    {
+      "company": "PhilCare",
+      "title": "Full Stack Developer",
+      "location": "Philippines",
+      "start_date": "Sep 2018",
+      "end_date": "Mar 2021"
+    },
+    {
+      "company": "The Philippine Stock Exchange, Inc. (PSE)",
+      "title": "Junior Web Developer",
+      "location": "Philippines",
+      "start_date": "Nov 2017",
+      "end_date": "Aug 2018"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's Degree, Information Technology",
+      "school": "Saint Louis University",
+      "start_year": "2013",
+      "end_year": "2017"
+    }
+  ]
+}
