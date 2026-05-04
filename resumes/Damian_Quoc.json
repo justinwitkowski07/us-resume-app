@@ -1,0 +1,48 @@
+{
+  "name": "Damian Tran Quoc",
+  "email": "damian.quoc.work@outlook.com",
+  "phone": "",
+  "location": "Rzeszów, Podkarpackie, Poland",
+  "linkedin": "https://www.linkedin.com/in/damian-tran-quoc-91a03a383/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Nordstrom",
+      "title": "Senior Full Stack Engineer",
+      "location": "United States",
+      "start_date": "July 2023",
+      "end_date": "Present"
+    },
+    {
+      "company": "Codete GmbH",
+      "title": "Full Stack Engineer",
+      "location": "Poland",
+      "start_date": "Oct 2021",
+      "end_date": "Jun 2023"
+    },
+    {
+      "company": "Goldman Sachs",
+      "title": "Software Engineer",
+      "location": "Poland",
+      "start_date": "Nov 2019",
+      "end_date": "Sep 2021"
+    },
+    {
+      "company": "Savvycom",
+      "title": "Junior Full Stack Developer",
+      "location": "Vietnam",
+      "start_date": "Nov 2017",
+      "end_date": "Sep 2019"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science, Computer Science",
+      "school": "HUTECH - Ho Chi Minh City University of Technology",
+      "start_year": "2013",
+      "end_year": "2017"
+    }
+  ]
+}
