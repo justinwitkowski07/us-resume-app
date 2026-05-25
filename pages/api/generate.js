@@ -4,6 +4,7 @@ import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 import Handlebars from "handlebars";
+import * as jsonc from "jsonc-parser";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -163,8 +164,150 @@ const loadProfile = (profileName) => {
   return profileData;
 };
 
+const extractJsonObject = (text) => {
+  const start = text.indexOf("{");
+  if (start === -1) return null;
+
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i];
+
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+      } else if (ch === "\\") {
+        escaped = true;
+      } else if (ch === '"') {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (ch === '"') {
+      inString = true;
+    } else if (ch === "{") {
+      depth++;
+    } else if (ch === "}") {
+      depth--;
+      if (depth === 0) return text.slice(start, i + 1);
+    }
+  }
+
+  return null;
+};
+
+const escapeControlCharsInJsonStrings = (jsonText) => {
+  let result = "";
+  let inString = false;
+  let escaped = false;
+
+  for (let i = 0; i < jsonText.length; i++) {
+    const ch = jsonText[i];
+
+    if (!inString) {
+      result += ch;
+      if (ch === '"') inString = true;
+      escaped = false;
+      continue;
+    }
+
+    if (escaped) {
+      result += ch;
+      escaped = false;
+      continue;
+    }
+
+    if (ch === "\\") {
+      result += ch;
+      escaped = true;
+      continue;
+    }
+
+    if (ch === '"') {
+      result += ch;
+      inString = false;
+      continue;
+    }
+
+    if (ch === "\n") result += "\\n";
+    else if (ch === "\r") continue;
+    else if (ch === "\t") result += "\\t";
+    else if (ch.charCodeAt(0) < 32) continue;
+    else result += ch;
+  }
+
+  return result;
+};
+
+const tryParseResumeJson = (rawContent) => {
+  let content = rawContent
+    .replace(/```(?:json|javascript)?\s*/gi, "")
+    .replace(/```\s*/g, "")
+    .replace(/^(here is|here's|this is|the json is):?\s*/gi, "")
+    .trim();
+
+  const extracted = extractJsonObject(content);
+  if (!extracted) {
+    return { ok: false, error: "No JSON object found in response" };
+  }
+
+  const attempts = [
+    extracted,
+    extracted.replace(/,(\s*[}\]])/g, "$1").replace(/,\s*,/g, ","),
+    escapeControlCharsInJsonStrings(extracted),
+    escapeControlCharsInJsonStrings(
+      extracted.replace(/,(\s*[}\]])/g, "$1").replace(/,\s*,/g, ",")
+    ),
+  ];
+
+  for (const candidate of attempts) {
+    try {
+      return { ok: true, data: JSON.parse(candidate) };
+    } catch {
+      // continue
+    }
+
+    const jsoncErrors = [];
+    const jsoncResult = jsonc.parse(candidate, jsoncErrors);
+    if (jsoncErrors.length === 0 && jsoncResult !== undefined) {
+      return { ok: true, data: jsoncResult };
+    }
+  }
+
+  return { ok: false, error: "JSON parse failed after repair attempts" };
+};
+
+const normalizeResumeContent = (resumeContent) => {
+  if (Array.isArray(resumeContent.summary)) {
+    resumeContent.summary = resumeContent.summary.filter(Boolean).join(" ");
+  } else if (typeof resumeContent.summary === "string") {
+    resumeContent.summary = resumeContent.summary.replace(/\s+/g, " ").trim();
+  }
+
+  if (Array.isArray(resumeContent.experience)) {
+    resumeContent.experience = resumeContent.experience.map((exp) => ({
+      ...exp,
+      details: Array.isArray(exp.details)
+        ? exp.details.map((d) => String(d).replace(/\s+/g, " ").trim())
+        : [],
+    }));
+  }
+
+  return resumeContent;
+};
+
 // Call OpenAI with timeout & retries
-async function callOpenAI(promptOrMessages, model = null, maxTokens = 8192, retries = 2, timeoutMs = 180000) {
+async function callOpenAI(promptOrMessages, options = {}) {
+  const {
+    model = null,
+    maxTokens = 8192,
+    retries = 2,
+    timeoutMs = 180000,
+    jsonMode = false,
+  } = options;
   while (retries > 0) {
     try {
       if (!process.env.OPENAI_API_KEY) {
@@ -201,6 +344,10 @@ async function callOpenAI(promptOrMessages, model = null, maxTokens = 8192, retr
         temperature: 1,
         messages,
       };
+
+      if (jsonMode) {
+        apiParams.response_format = { type: "json_object" };
+      }
 
       const completion = await Promise.race([
         openai.chat.completions.create(apiParams),
@@ -327,7 +474,8 @@ Allowed adjustments ONLY:
 
 **3. SUMMARY (REALISTIC SENIOR NARRATIVE)**
 
-Write exactly 6-7 complete sentences as one flowing paragraph (newline-separated in JSON). Each sentence should be rich and 25-35 words. Do NOT write short one-clause fragments.
+Write exactly 6-7 complete sentences as one flowing paragraph. Each sentence should be rich and 15-25 words. Do NOT write short one-clause fragments.
+SUMMARY JSON RULE: "summary" must be ONE single-line string (all sentences joined with spaces). Never put line breaks inside the summary value.
 
 STRUCTURE (one full sentence each):
 - Sentence 1: [Title] with ${yearsOfExperience}+ years of experience building [domain-specific systems] (e.g., scalable web and data systems)
@@ -442,11 +590,17 @@ Before output:
 
 **OUTPUT (STRICT)**
 
-ONLY valid JSON:
-{"title":"...","summary":"...","skills":{"Category":["Skill1","Skill2"]},"experience":[{"title":"...","details":["bullet1","bullet2"]}]}
+Return ONLY one valid JSON object (no markdown). Required shape:
+{"title":"...","summary":"Sentence 1. Sentence 2. Sentence 3.","skills":{"Category":["Skill1","Skill2"]},"experience":[{"title":"...","details":["bullet1","bullet2"]}]}
+
+JSON RULES:
+- "summary" is a single string on one line (sentences separated by spaces only, no \\n or line breaks in the value)
+- Escape any double quotes inside string values as \\"
+- No trailing commas
 `;
 
-    const aiResponse = await callOpenAI(prompt);
+    const callOptions = { jsonMode: true };
+    const aiResponse = await callOpenAI(prompt, callOptions);
     
     // Log token usage to debug if we're hitting limits
     console.log("OpenAI API Response Metadata:");
@@ -456,28 +610,15 @@ ONLY valid JSON:
     console.log("- Input tokens:", aiResponse.usage?.input_tokens);
     console.log("- Output tokens:", aiResponse.usage?.output_tokens);
     
-    let content;
-    if (finishReason === 'length') {
-      console.error("⚠️ WARNING: OpenAI hit the max_tokens limit! Response was truncated.");
-      console.log("🔄 Retrying with reduced requirements to fit in token limit...");
-      
-      // Retry with a more concise prompt
-      const concisePrompt = prompt
-        .replace(/60-80 skills/g, '60-70 skills')
-        .replace(/6-8 bullets per job/g, '6-8 bullets per job')
-        .replace(/6-8 bullets/g, '6-8 bullets')
-        .replace(/25-30 words/g, '20-25 words');
-      
-      const retryResponse = await callOpenAI(concisePrompt);
-      console.log("Retry Response Metadata:");
-      console.log("- Stop reason:", retryResponse.stop_reason);
-      console.log("- Output tokens:", retryResponse.usage?.output_tokens);
-      
-      content = (retryResponse.content || []).map(part => part?.text || "").join("").trim();
-    } else {
-      content = (aiResponse.content || []).map(part => part?.text || "").join("").trim();
+    const getTextContent = (response) =>
+      (response.content || []).map((part) => part?.text || "").join("").trim();
+
+    let content = getTextContent(aiResponse);
+
+    if (finishReason === "length") {
+      console.error("⚠️ WARNING: OpenAI hit the max_tokens limit! Response may be truncated.");
     }
-    
+
     // Check if AI is apologizing instead of returning JSON
     if (content.toLowerCase().startsWith("i'm sorry") || 
         content.toLowerCase().startsWith("i cannot") || 
@@ -486,48 +627,33 @@ ONLY valid JSON:
       throw new Error("AI refused to generate resume. The prompt may be too complex. Please try again with a shorter job description or simpler requirements.");
     }
     
-    // Optimized JSON extraction - handle various formats
-    // Remove markdown code blocks and common prefixes in one pass
-    content = content
-      .replace(/```(?:json|javascript)?\s*/gi, "")
-      .replace(/```\s*/g, "")
-      .replace(/^(here is|here's|this is|the json is):?\s*/gi, "")
-      .trim();
-    
-    // Extract JSON object boundaries
-    const firstBrace = content.indexOf('{');
-    const lastBrace = content.lastIndexOf('}');
-    
-    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-      content = content.substring(firstBrace, lastBrace + 1);
-    } else {
-      console.error("No JSON object found in response");
-      throw new Error("AI did not return valid JSON format. Please try again.");
+    let parsed = tryParseResumeJson(content);
+
+    if (!parsed.ok) {
+      console.log("🔄 Retrying with reduced requirements after JSON parse failure...");
+      const concisePrompt = prompt
+        .replace(/60-80 skills/g, "50-60 skills")
+        .replace(/6-8 bullets per job/g, "5-6 bullets per job")
+        .replace(/6-8 bullets/g, "5-6 bullets")
+        .replace(/25-30 words/g, "20-25 words")
+        .replace(/25-35 words/g, "20-28 words");
+
+      const retryResponse = await callOpenAI(concisePrompt, callOptions);
+      console.log("Retry stop reason:", retryResponse.stop_reason);
+      content = getTextContent(retryResponse);
+      parsed = tryParseResumeJson(content);
     }
-    
-    // Parse JSON with better error handling
-    let resumeContent;
-    try {
-      resumeContent = JSON.parse(content);
-    } catch (parseError) {
+
+    if (!parsed.ok) {
       console.error("=== JSON PARSE ERROR ===");
-      console.error("Parse error:", parseError.message);
+      console.error("Error:", parsed.error);
       console.error("Content length:", content.length);
       console.error("First 1000 chars:", content.substring(0, 1000));
       console.error("Last 500 chars:", content.substring(Math.max(0, content.length - 500)));
-      
-      // Try to fix common JSON issues (optimized)
-      try {
-        let fixedContent = content
-          .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
-          .replace(/,\s*,/g, ','); // Remove double commas
-        resumeContent = JSON.parse(fixedContent);
-        console.log("✅ Successfully parsed after fixing common issues");
-      } catch (secondError) {
-        console.error("Failed to parse even after fixes");
-        throw new Error(`AI returned invalid JSON: ${parseError.message}. Please try again.`);
-      }
+      throw new Error("AI did not return valid JSON format. Please try again.");
     }
+
+    let resumeContent = normalizeResumeContent(parsed.data);
     
     // Validate required fields
     if (!resumeContent.title || !resumeContent.summary || !resumeContent.skills || !resumeContent.experience) {
