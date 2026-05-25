@@ -1,0 +1,48 @@
+{
+  "name": "Piotr Mac",
+  "email": "mpiotr28@outlook.com",
+  "phone": "",
+  "location": "Rzeszów, Podkarpackie, Poland",
+  "linkedin": "https://www.linkedin.com/in/piotr-mac-52617140b/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Redcare Pharmacy",
+      "title": "Senior Software Engineer",
+      "location": "Netherlands",
+      "start_date": "Nov 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Deepflare",
+      "title": "Technical Lead",
+      "location": "Poland",
+      "start_date": "Apr 2021",
+      "end_date": "Aug 2024"
+    },
+    {
+      "company": "Merixstudio",
+      "title": "Software Engineer",
+      "location": "Poland",
+      "start_date": "Jun 2018",
+      "end_date": "Mar 2021"
+    },
+    {
+      "company": "TinhVan Outsourcing Vietnam",
+      "title": "Software Engineer Intern",
+      "location": "Vietnam",
+      "start_date": "Jan 2017",
+      "end_date": "May 2018"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's degree, Computer Science",
+      "school": "Vietnam Maritime University",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}
