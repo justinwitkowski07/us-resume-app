@@ -633,11 +633,11 @@ JSON RULES:
     if (!parsed.ok) {
       console.log("🔄 Retrying with reduced requirements after JSON parse failure...");
       const concisePrompt = prompt
-        .replace(/60-80 skills/g, "50-60 skills")
-        .replace(/6-8 bullets per job/g, "5-6 bullets per job")
-        .replace(/6-8 bullets/g, "5-6 bullets")
-        .replace(/25-30 words/g, "20-25 words")
-        .replace(/25-35 words/g, "20-28 words");
+        .replace(/60-80 skills/g, "60-80 skills")
+        .replace(/6-8 bullets per job/g, "7-8 bullets per job")
+        .replace(/6-8 bullets/g, "7-8 bullets")
+        .replace(/25-30 words/g, "25-30 words")
+        .replace(/25-35 words/g, "25-30 words");
 
       const retryResponse = await callOpenAI(concisePrompt, callOptions);
       console.log("Retry stop reason:", retryResponse.stop_reason);
