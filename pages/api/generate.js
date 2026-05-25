@@ -254,8 +254,8 @@ export default async function handler(req, res) {
 
     const yearsOfExperience = Math.max(8, calculateYears(profileData.experience) - 1);
 
-    // AI PROMPT: Generate ATS-optimized resume content as JSON (optimized - more concise)
-    const prompt = `ATS optimization expert. Generate resume JSON: {"title":"...","summary":"...","skills":{...},"experience":[...]}
+    // AI PROMPT: Realism-first ATS resume generation
+    const prompt = `Realism-first ATS resume expert. Generate resume JSON: {"title":"...","summary":"...","skills":{...},"experience":[...]}
 
 **OUTPUT: ONLY valid JSON, no markdown/explanations.**
 
@@ -278,90 +278,166 @@ ${profileData.education.map(edu => `${edu.degree}, ${edu.school} (${edu.start_ye
 **JOB DESCRIPTION:**
 ${jd}
 
-**INSTRUCTIONS:**
+**INSTRUCTIONS (REALISM-FIRST ATS ENGINE)**
 
-**1. DOMAIN KEYWORDS** (10-15 from JD "About Us"): Identity/Security (OAuth2, JWT, SAML, MFA, SSO, SOC 2, GDPR), Payments (PCI-DSS, fraud detection, KYC/AML, tokenization), Healthcare (HIPAA, HL7, FHIR, EHR), Data (data governance, GDPR, PII protection). Use in Summary (3-5), Skills (dedicated category), Experience (2-3 bullets).
+**1. DOMAIN KEYWORDS (CONTEXT-AWARE ONLY)**
 
----
+Extract 8-15 relevant keywords from JD.
 
-### **2. TITLE**
-- **BASE TITLE:** Use the candidate's MOST RECENT job title from their work history (first entry in experience list)
-- **CRITICAL RULE - MATCHING LOGIC:** To determine if titles match, normalize both titles by:
-  1. Remove seniority indicators: "Senior", "Lead", "Principal", "Staff", "Junior", "Entry-Level" (ignore these words)
-  2. Extract core role type: "Full Stack", "Frontend", "Backend", "Software Engineer", "Developer", "Engineer", "Architect", "DevOps", "QA", etc.
-  3. Compare core role types - they MATCH if they refer to the same domain/type, even if wording differs slightly
-  
-**TITLES MATCH IF:**
-- Both are Full Stack roles: "Senior Full Stack Engineer" = "Full Stack Developer" = "Full Stack Software Engineer" = "Full Stack Engineer" → MATCH
-- Both are Frontend roles: "Senior Frontend Engineer" = "Frontend Developer" = "Frontend Software Engineer" → MATCH
-- Both are Backend roles: "Senior Backend Engineer" = "Backend Developer" = "Backend Software Engineer" → MATCH
-- Both are Software Engineer/Developer (general): "Senior Software Engineer" = "Software Developer" = "Senior Developer" → MATCH
-- Both are DevOps roles: "Senior DevOps Engineer" = "DevOps Engineer" = "DevOps Specialist" → MATCH
+CORE RULE (IMPORTANT):
+Domain keywords are NOT mandatory or universal.
+Include ONLY IF:
+- Supported by candidate experience OR
+- Clearly implied by company domain OR
+- Explicitly required by JD AND realistically align with role scope
 
-**TITLES DON'T MATCH IF:**
-- Profile is Full Stack, JD is Frontend-only → NO MATCH (add "Frontend Specialist")
-- Profile is Frontend, JD is Backend-only → NO MATCH (add "Backend Specialist")
-- Profile is Backend, JD is Full Stack → NO MATCH (add "Full Stack Experience")
-- Profile is Software Engineer (general), JD is Frontend-specific → NO MATCH (add "Frontend Specialist")
+VALID USAGE EXAMPLES:
+- Identity/Security -> ONLY if backend/auth/system/security work exists
+- OAuth2 / JWT -> ONLY if authentication systems are present
+- GDPR / SOC2 -> ONLY if enterprise/regulatory systems exist
+- HIPAA / FHIR -> ONLY if healthcare domain is explicitly relevant
+- Data Governance -> ONLY if data-heavy systems exist
 
-- **If titles MATCH:** Use format: [Profile's Most Recent Title] (NO specialization added)
-- **If titles DON'T match:** Use format: [Profile's Most Recent Title] | [JD-Related Specialization]
+FORBIDDEN:
+- injecting healthcare keywords into non-healthcare companies
+- forcing compliance terms into generic SaaS roles
+- keyword stuffing unrelated to experience
 
-- **JD-Related Specialization (ONLY if titles don't match):** Add 1 specialization/role that aligns with the JD focus (e.g., if applying for frontend job with full stack profile: "Frontend Specialist" or "Frontend Lead")
-  - If JD is frontend-focused → "Frontend Specialist" or "Frontend Lead"
-  - If JD is backend-focused → "Backend Specialist" or "Backend Architect"
-  - If JD is Full Stack-focused → "Full Stack Developer" or "Full Stack Experience"
-  - If JD is DevOps-focused → "DevOps Specialist" or "Infrastructure Lead"
-  - If JD is QA-focused → "QA Specialist" or "Quality Assurance Lead"
-  - Match the specialization to the JD's primary focus area
+FALLBACK RULE:
+If not supported, replace with neutral equivalents:
+- "secure authentication systems"
+- "data access controls"
+- "privacy-aware system design"
+- "regulated data handling (general)"
 
-- **Examples:**
-  - Profile: "Senior Full Stack Engineer", JD: "Full Stack Developer" → MATCH → "Senior Full Stack Engineer" (NO specialization)
-  - Profile: "Full Stack Software Engineer", JD: "Full Stack Developer" → MATCH → "Full Stack Software Engineer" (NO specialization)
-  - Profile: "Senior Frontend Software Engineer", JD: "Frontend Developer" → MATCH → "Senior Frontend Software Engineer" (NO specialization)
-  - Profile: "Senior Full Stack Engineer", JD: "Frontend Engineer" → NO MATCH → "Senior Full Stack Engineer | Frontend Specialist"
-  - Profile: "Senior Software Engineer", JD: "Backend Engineer" → NO MATCH → "Senior Software Engineer | Backend Architect"
-  - Profile: "Senior Frontend Engineer", JD: "Full Stack Developer" → NO MATCH → "Senior Frontend Engineer | Full Stack Experience"
+**2. TITLE (CAREER CONSISTENCY LOCK)**
 
----
+Base Title: Most recent job title (first experience entry)
 
-**3. SUMMARY** (5-6 lines, 8-12 JD keywords + 3-5 domain): Line 1: [Title] with ${yearsOfExperience}+ years in [domain]. Line 2: Expertise in [domain keyword] + [3-4 JD techs with versions]. Line 3: Track record in [domain keyword] + [achievement with metric]. Line 4: Proficient in [3-4 more JD techs]. Line 5: [Soft skill] professional with Agile/leadership experience. Line 6: Focus on [2-3 JD skill areas] + scalable solutions.
+RULE:
+Maintain ONE consistent engineering identity across entire resume.
 
----
+STRICT RULE:
+Do NOT transform candidate into different career paths unless explicitly supported by experience history.
 
-**4. SKILLS** (60-80 total, 5-8 categories): Categories by JD focus (Frontend, Backend, Cloud, DevOps, Security). 8-12 skills/category. Capitalize first letter. NO version spam. Group cloud: "AWS (Lambda, S3, EC2)". 70% JD keywords + 30% complementary. Domain category if relevant (FinTech→"Payment & Compliance", Healthcare→"Healthcare Compliance", Security→"Security & Identity", Data→"Data Governance").
+Allowed adjustments ONLY:
+- frontend <-> fullstack
+- backend <-> API/backend specialist
+- devops <-> infrastructure specialist
 
----
+**3. SUMMARY (REALISTIC SENIOR NARRATIVE)**
 
-**5. EXPERIENCE** (${profileData.experience.length} entries, 6-8 bullets each): The **JOB DESCRIPTION IS PRIMARY**. Every bullet must be mapped to 1-3 high-priority JD requirements while still accurately reflecting the candidate's real work history. 6-8 bullets/job (recent=8, older=5-6). 25-35 words/bullet. 2-4 exact JD keywords/bullet. EVERY bullet needs a metric (%, $, time, scale, users). Industry context in 2-3 bullets/job. Overall targeting **ATS score ≥ 95%**.
+5-6 lines
 
-**CRITICAL: JD-FIRST, DETAIL-BASED BULLETS (TARGET ATS ≥ 95%)** - ALWAYS treat the JD as the primary source for what to highlight, but the candidate's experience details as the source of truth:
-1. **Start from provided Details** - For any job that includes "Details", you MUST derive bullets from those actual accomplishments and responsibilities (do not invent unrelated work).
-2. **Align to JD for ATS** - Enhance and tailor each bullet by adding JD-relevant keywords, mapping to JD responsibilities, and ensuring strong metrics, with the explicit goal of achieving **ATS ≥ 95%**.
-3. **Maintain authenticity** - Keep the core accomplishments, seniority level, and technologies from the provided details; only refine wording, structure, and keyword usage for ATS optimization.
-4. **If no details provided** - Then (and only then) generate bullets based on the job title, company, dates, and JD requirements, ensuring JD alignment and ATS ≥ 95% while staying plausible for that role.
+STRUCTURE:
+- Line 1: Title with ${yearsOfExperience}+ years in [domain]
+- Line 2: Core expertise (max 1-2 technologies)
+- Line 3: Key achievement with metric
+- Line 4: Secondary technical strengths
+- Line 5: Soft skills + leadership/Agile
+- Line 6: Focus areas (scalability, reliability, delivery)
 
-**CRITICAL: TECHNOLOGY RELEASE DATES** - You MUST verify that every technology/framework/tool mentioned in experience bullets was actually available/released during that job's time period. Check the job dates (start_date - end_date) and ONLY use technologies that existed at that time. Examples:
-- Angular: Released 2016 → CANNOT use for jobs before 2016
-- React: Released 2013 → CANNOT use for jobs before 2013
-- TypeScript: Released 2012 → CANNOT use for jobs before 2012
-- Vue.js: Released 2014 → CANNOT use for jobs before 2014
-- Next.js: Released 2016 → CANNOT use for jobs before 2016
-- Docker: Released 2013 → CANNOT use for jobs before 2013
-- Kubernetes: Released 2014 → CANNOT use for jobs before 2014
-- AWS Lambda: Released 2014 → CANNOT use for jobs before 2014
-- GraphQL: Released 2015 → CANNOT use for jobs before 2015
-- If unsure about a technology's release date, use generic terms or older alternatives that existed at that time (e.g., for pre-2013 frontend: jQuery, Backbone.js, AngularJS 1.x; for pre-2013 backend: PHP, Java, .NET, Ruby on Rails).
+RULES:
+- Max 1-2 technical keywords per line
+- 40% technical / 60% narrative balance
+- NO keyword stacking
+- Avoid repeating same keyword across lines
+- Mix impact levels naturally: small (10-20%), medium (20-50%), rare high (50%+)
 
-**Bullet:** [Action Verb] + [JD Tech that existed during job period] + [built] + [impact] + [metric]. Verbs: Architected, Engineered, Designed, Built, Developed, Implemented, Optimized, Enhanced, Led, Spearheaded, Automated, Deployed. AVOID: "Responsible for", "Worked on".
+**4. SKILLS (REAL-WORLD STACK MODEL)**
 
-**Metrics:** Performance (40% faster, 3x throughput), Scale (50K+ users, 10M+ records), Cost (saved $500K, reduced costs 35%), Time (deployment 2hrs→15min), Quality (99.9% uptime, 90% coverage), Team (led team of 10).
+60-80 skills across 5-8 categories
 
----
+REALISM PRINCIPLES:
+- 50-60% primary stack (real usage only)
+- 30-40% adjacent/supporting skills
+- 10% aspirational (ONLY if plausible)
 
-**ATS CHECKLIST:** Use EXACT JD phrases (not synonyms). High-priority keywords 3-4x (Skills+Summary+2-3 bullets). All required/preferred JD skills in Skills. Match tech versions. Natural flow, professional tone, varied verbs, strong metrics, domain keywords integrated.
+STRICT RULES:
+- No "everything engineer" syndrome
+- No conflicting ecosystems (e.g., too many frameworks from unrelated stacks)
+- No repeated keywords across categories
+- Must match: job timeline, company type, industry maturity
 
-**OUTPUT:** ONLY valid JSON: {"title":"...","summary":"...","skills":{"Category":["Skill1","Skill2"]},"experience":[{"title":"...","details":["bullet1","bullet2"]}]}
+**5. EXPERIENCE (REALISM-FIRST ENGINE)**
+
+${profileData.experience.length} entries, 6-8 bullets per job
+
+CORE PRINCIPLE:
+Experience must reflect: company scale, industry type, time period tech adoption, realistic seniority growth.
+
+DETAIL-BASED BULLETS (CRITICAL):
+1. Start from provided Details - For any job with "Details", derive bullets from those accomplishments (do not invent unrelated work).
+2. Align to JD naturally - Tailor wording and emphasis to JD where authentic; never force unsupported keywords.
+3. Maintain authenticity - Keep core accomplishments, seniority, and technologies from provided details.
+4. If no details provided - Generate plausible bullets from job title, company, dates, and JD while staying realistic.
+
+STRUCTURE PER JOB:
+- 1 system-level ownership bullet (ONLY if justified)
+- 2-3 feature/engineering delivery bullets
+- 2-3 optimization/maintenance/collaboration bullets
+
+KEYWORD RULE:
+- Max 1-2 JD keywords per bullet
+- 30% bullets must NOT contain explicit keywords (implicit mapping allowed)
+
+METRIC REALISM MODEL:
+- 10-20% improvements -> common
+- 20-50% improvements -> standard
+- 50%+ improvements -> rare
+- 2x-3x -> max 1-2 per entire resume
+
+**6. TECHNOLOGY REALISM RULE (STRICT)**
+
+Only use technologies that:
+- existed during job timeframe
+- were realistically adopted in that company type
+
+If uncertain -> use generic alternatives instead of specific frameworks.
+
+Technology release examples (verify against job dates):
+- Angular: 2016 | React: 2013 | TypeScript: 2012 | Vue.js: 2014 | Next.js: 2016
+- Docker: 2013 | Kubernetes: 2014 | AWS Lambda: 2014 | GraphQL: 2015
+- Pre-2013 frontend: jQuery, Backbone.js, AngularJS 1.x | Pre-2013 backend: PHP, Java, .NET, Ruby on Rails
+
+**7. COMPANY CONTEXT RULE (CRITICAL)**
+
+Each company must influence output style:
+- Enterprise (e.g., Nordstrom): governance, scale, compliance, reliability
+- Mid-size SaaS: feature velocity, optimization, scaling
+- Startup: ownership, rapid iteration, system building
+- Early career roles: implementation, support, learning focus
+
+**8. CAREER CONSISTENCY RULE**
+
+Resume must represent ONE real human career.
+
+DO NOT over-specialize differently per job.
+
+**9. BULLET FORMAT**
+
+Action Verb + Tech (valid for timeframe) + What + Impact + Metric
+
+Verbs: Architected, Engineered, Designed, Built, Developed, Implemented, Optimized, Enhanced, Led, Spearheaded, Automated, Deployed
+
+Avoid: Responsible for, Worked on
+
+**10. ATS + REALISM CHECKLIST**
+
+Before output:
+- Resume reads like ONE consistent career
+- No keyword injection without context
+- No unrealistic stack inflation
+- Metrics are varied and believable
+- Company context is preserved
+- Tech matches timeline realism
+- Keywords are natural, not forced
+- Balance exists between ATS and human readability
+
+**OUTPUT (STRICT)**
+
+ONLY valid JSON:
+{"title":"...","summary":"...","skills":{"Category":["Skill1","Skill2"]},"experience":[{"title":"...","details":["bullet1","bullet2"]}]}
 `;
 
     const aiResponse = await callOpenAI(prompt);
@@ -381,10 +457,9 @@ ${jd}
       
       // Retry with a more concise prompt
       const concisePrompt = prompt
-        .replace(/TOTAL: 60-80 skills maximum/g, 'TOTAL: 50-60 skills maximum')
-        .replace(/Per category: 8-12 skills/g, 'Per category: 6-10 skills')
-        .replace(/6 bullets each/g, '5 bullets each')
-        .replace(/5-6 bullets per job/g, '4-5 bullets per job');
+        .replace(/60-80 skills/g, '50-60 skills')
+        .replace(/6-8 bullets per job/g, '5-6 bullets per job')
+        .replace(/6-8 bullets/g, '5-6 bullets');
       
       const retryResponse = await callOpenAI(concisePrompt);
       console.log("Retry Response Metadata:");
