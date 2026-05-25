@@ -327,22 +327,27 @@ Allowed adjustments ONLY:
 
 **3. SUMMARY (REALISTIC SENIOR NARRATIVE)**
 
-8-9 lines
+Write exactly 6-7 complete sentences as one flowing paragraph (newline-separated in JSON). Each sentence should be rich and 25-35 words. Do NOT write short one-clause fragments.
 
-STRUCTURE:
-- Line 1: Title with ${yearsOfExperience}+ years in [domain]
-- Line 2: Core expertise (max 1-2 technologies)
-- Line 3: Key achievement with metric
-- Line 4: Secondary technical strengths
-- Line 5: Soft skills + leadership/Agile
-- Line 6: Focus areas (scalability, reliability, delivery)
+STRUCTURE (one full sentence each):
+- Sentence 1: [Title] with ${yearsOfExperience}+ years of experience building [domain-specific systems] (e.g., scalable web and data systems)
+- Sentence 2: Core expertise in 1-2 primary technologies, extended with how they were applied across real systems (backend/frontend/fullstack scope as appropriate)
+- Sentence 3: Flagship achievement with metric, naming the business outcome and technical work (e.g., AI integrations, APIs, automation)
+- Sentence 4: Secondary technical depth (data modeling, databases, pipelines, architecture) tied to scale or system type
+- Sentence 5: Infrastructure/cloud or platform strengths with reliability/maintainability framing
+- Sentence 6: Leadership, collaboration, Agile delivery, mentoring (only if supported by experience)
+- Sentence 7: Forward-looking focus areas aligned to JD (reliability, performance, automation, LLM/modern stack only if plausible)
+
+STYLE (match this density and tone, adapt to candidate/JD):
+"Senior Lead Software Engineer with 10+ years of experience building scalable web and data systems. Core expertise in Python and Vue.js with strong experience delivering production features across backend and frontend systems. Delivered AI-powered lead automation and API integrations that improved qualified lead conversion by 22%. Experienced in designing PostgreSQL data models and analytics pipelines for high-volume systems. Hands-on with AWS and Terraform to build reliable and maintainable cloud infrastructure. Proven technical leader in Agile teams, mentoring engineers and driving end-to-end delivery. Focused on system reliability, performance optimization, and automation of business workflows using modern backend and LLM-based solutions."
 
 RULES:
-- Max 1-2 technical keywords per line
+- Use connective phrasing: "with strong experience", "Experienced in", "Hands-on with", "Proven technical leader", "Focused on"
+- Max 1-2 technical keywords per sentence; weave into natural prose, not lists
 - 40% technical / 60% narrative balance
-- NO keyword stacking
-- Avoid repeating same keyword across lines
+- NO keyword stacking or repeated buzzwords across sentences
 - Mix impact levels naturally: small (10-20%), medium (20-50%), rare high (50%+)
+- FORBIDDEN: choppy summaries like "Core expertise in X and Y." as a standalone tiny line
 
 **4. SKILLS (REAL-WORLD STACK MODEL)**
 
@@ -458,9 +463,9 @@ ONLY valid JSON:
       
       // Retry with a more concise prompt
       const concisePrompt = prompt
-        .replace(/60-80 skills/g, '50-60 skills')
-        .replace(/6-8 bullets per job/g, '5-6 bullets per job')
-        .replace(/6-8 bullets/g, '5-6 bullets')
+        .replace(/60-80 skills/g, '60-70 skills')
+        .replace(/6-8 bullets per job/g, '6-8 bullets per job')
+        .replace(/6-8 bullets/g, '6-8 bullets')
         .replace(/25-30 words/g, '20-25 words');
       
       const retryResponse = await callOpenAI(concisePrompt);
