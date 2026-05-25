@@ -308,7 +308,8 @@ async function callOpenAI(promptOrMessages, options = {}) {
     timeoutMs = 180000,
     jsonMode = false,
   } = options;
-  while (retries > 0) {
+  let attemptsLeft = retries;
+  while (attemptsLeft > 0) {
     try {
       if (!process.env.OPENAI_API_KEY) {
         throw new Error("Missing OPENAI_API_KEY");
@@ -367,9 +368,9 @@ async function callOpenAI(promptOrMessages, options = {}) {
         model: completion.model,
       };
     } catch (err) {
-      retries--;
-      if (retries === 0) throw err;
-      console.log(`Retrying... (${retries} attempts left)`);
+      attemptsLeft--;
+      if (attemptsLeft === 0) throw err;
+      console.log(`Retrying... (${attemptsLeft} attempts left)`);
     }
   }
 }
