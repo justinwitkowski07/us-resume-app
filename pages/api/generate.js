@@ -327,7 +327,7 @@ Allowed adjustments ONLY:
 
 **3. SUMMARY (REALISTIC SENIOR NARRATIVE)**
 
-5-6 lines
+8-9 lines
 
 STRUCTURE:
 - Line 1: Title with ${yearsOfExperience}+ years in [domain]
@@ -372,6 +372,8 @@ DETAIL-BASED BULLETS (CRITICAL):
 3. Maintain authenticity - Keep core accomplishments, seniority, and technologies from provided details.
 4. If no details provided - Generate plausible bullets from job title, company, dates, and JD while staying realistic.
 
+Each bullet should be rich and between 25-30 words.
+
 STRUCTURE PER JOB:
 - 1 system-level ownership bullet (ONLY if justified)
 - 2-3 feature/engineering delivery bullets
@@ -412,8 +414,6 @@ Each company must influence output style:
 
 Resume must represent ONE real human career.
 
-DO NOT over-specialize differently per job.
-
 **9. BULLET FORMAT**
 
 Action Verb + Tech (valid for timeframe) + What + Impact + Metric
@@ -425,6 +425,7 @@ Avoid: Responsible for, Worked on
 **10. ATS + REALISM CHECKLIST**
 
 Before output:
+- Each bullet is rich and between 25-30 words
 - Resume reads like ONE consistent career
 - No keyword injection without context
 - No unrealistic stack inflation
@@ -459,7 +460,8 @@ ONLY valid JSON:
       const concisePrompt = prompt
         .replace(/60-80 skills/g, '50-60 skills')
         .replace(/6-8 bullets per job/g, '5-6 bullets per job')
-        .replace(/6-8 bullets/g, '5-6 bullets');
+        .replace(/6-8 bullets/g, '5-6 bullets')
+        .replace(/25-30 words/g, '20-25 words');
       
       const retryResponse = await callOpenAI(concisePrompt);
       console.log("Retry Response Metadata:");
