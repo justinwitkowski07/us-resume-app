@@ -475,7 +475,7 @@ Allowed adjustments ONLY:
 
 **3. SUMMARY (REALISTIC SENIOR NARRATIVE)**
 
-Write exactly 6-7 complete sentences as one flowing paragraph. Each sentence should be rich and 15-25 words. Do NOT write short one-clause fragments.
+Write exactly 5-6 complete sentences as one flowing paragraph. Each sentence should be rich and 15-25 words. Do NOT write short one-clause fragments.
 SUMMARY JSON RULE: "summary" must be ONE single-line string (all sentences joined with spaces). Never put line breaks inside the summary value.
 
 STRUCTURE (one full sentence each):
@@ -484,11 +484,10 @@ STRUCTURE (one full sentence each):
 - Sentence 3: Flagship achievement with metric, naming the business outcome and technical work (e.g., AI integrations, APIs, automation)
 - Sentence 4: Secondary technical depth (data modeling, databases, pipelines, architecture) tied to scale or system type
 - Sentence 5: Infrastructure/cloud or platform strengths with reliability/maintainability framing
-- Sentence 6: Leadership, collaboration, Agile delivery, mentoring (only if supported by experience)
-- Sentence 7: Forward-looking focus areas aligned to JD (reliability, performance, automation, LLM/modern stack only if plausible)
+- Sentence 6 (optional — use for 6-sentence summaries only): Leadership, Agile delivery, mentoring, and forward-looking focus aligned to JD (reliability, performance, automation, LLM/modern stack only if plausible)
 
 STYLE (match this density and tone, adapt to candidate/JD):
-"Senior Lead Software Engineer with 10+ years of experience building scalable web and data systems. Core expertise in Python and Vue.js with strong experience delivering production features across backend and frontend systems. Delivered AI-powered lead automation and API integrations that improved qualified lead conversion by 22%. Experienced in designing PostgreSQL data models and analytics pipelines for high-volume systems. Hands-on with AWS and Terraform to build reliable and maintainable cloud infrastructure. Proven technical leader in Agile teams, mentoring engineers and driving end-to-end delivery. Focused on system reliability, performance optimization, and automation of business workflows using modern backend and LLM-based solutions."
+"Senior Lead Software Engineer with 10+ years of experience building scalable web and data systems. Core expertise in Python and Vue.js with strong experience delivering production features across backend and frontend systems. Delivered AI-powered lead automation and API integrations that improved qualified lead conversion by 22%. Experienced in designing PostgreSQL data models and analytics pipelines for high-volume systems. Hands-on with AWS and Terraform to build reliable and maintainable cloud infrastructure. Proven technical leader in Agile teams, mentoring engineers and focused on system reliability, performance optimization, and automation using modern backend and LLM-based solutions."
 
 RULES:
 - Use connective phrasing: "with strong experience", "Experienced in", "Hands-on with", "Proven technical leader", "Focused on"
@@ -515,7 +514,14 @@ STRICT RULES:
 
 **5. EXPERIENCE (REALISM-FIRST ENGINE)**
 
-${profileData.experience.length} entries, 6-8 bullets per job
+${profileData.experience.length} entries. Bullet count by seniority (most recent job = entry 1):
+
+BULLET COUNT BY LEVEL:
+- Recent senior-level roles (most recent 1-2 jobs; e.g., Senior, Lead, Principal, Staff, Architect): 6-8 bullets
+- Mid-level roles (middle career; e.g., Engineer, Developer, ML Engineer without senior prefix): 5-7 bullets
+- Early-level roles (oldest jobs; e.g., Analyst, Junior, Intern, first industry roles): 4-6 bullets
+
+Use job title, dates, and position in work history to pick the correct range per entry.
 
 CORE PRINCIPLE:
 Experience must reflect: company scale, industry type, time period tech adoption, realistic seniority growth.
@@ -633,11 +639,7 @@ JSON RULES:
     if (!parsed.ok) {
       console.log("🔄 Retrying with reduced requirements after JSON parse failure...");
       const concisePrompt = prompt
-        .replace(/60-80 skills/g, "60-80 skills")
-        .replace(/6-8 bullets per job/g, "7-8 bullets per job")
-        .replace(/6-8 bullets/g, "7-8 bullets")
-        .replace(/25-30 words/g, "25-30 words")
-        .replace(/25-35 words/g, "25-30 words");
+        .replace(/25-30 words/g, "25-30 words");
 
       const retryResponse = await callOpenAI(concisePrompt, callOptions);
       console.log("Retry stop reason:", retryResponse.stop_reason);
