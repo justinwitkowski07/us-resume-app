@@ -760,11 +760,22 @@ KEYWORD RULE:
 - Max 1-2 JD keywords per bullet
 - 30% bullets must NOT contain explicit keywords (implicit mapping allowed)
 
-METRIC REALISM MODEL:
-- 10-20% improvements -> common
-- 20-50% improvements -> standard
-- 50%+ improvements -> rare
-- 2x-3x -> max 1-2 per entire resume
+METRIC & IMPACT REALISM (CRITICAL):
+- Do NOT put a precise KPI in every bullet. Real resumes mix impact types.
+- Per job, aim for a natural blend:
+  - ~50-60% bullets: clear metrics (%, scale, time, cost, users) when plausible
+  - ~30-40% bullets: technical outcomes without exact numbers ("reduced query latency", "improved pipeline reliability", "faster dashboard load times")
+  - ~20-30% bullets: qualitative or scope-based outcomes (cross-team delivery, production stability, maintainability, stakeholder usability)
+- Avoid "100% KPI" resumes — that reads synthetic.
+- Percentages must feel human, not lab-perfect:
+  - FORBIDDEN pattern: many tidy round-ish values in one job (e.g., 28%, 35%, 42%, 48%, 62%)
+  - Prefer varied forms: approximate language ("significantly", "materially"), ranges ("20-30%"), scale ("thousands of requests/day"), time saved, before/after without over-precision
+  - Use exact % sparingly; max 2-3 precise percentage bullets per job, not every bullet
+- Distribution guide when metrics ARE used:
+  - 10-20% improvements -> common
+  - 20-50% improvements -> standard
+  - 50%+ improvements -> rare
+  - 2x-3x -> max 1-2 per entire resume
 
 **6. TECHNOLOGY REALISM RULE (STRICT)**
 
@@ -793,7 +804,19 @@ Resume must represent ONE real human career.
 
 **9. BULLET FORMAT**
 
-Action Verb + Tech (valid for timeframe) + What + Impact + Metric
+Action Verb + Tech (valid for timeframe) + What + Impact (+ Metric ONLY when it sounds natural)
+
+Template options (vary across bullets):
+- With metric: [Verb] + [Tech] + [what you built/changed] + [measurable outcome when real]
+- Without precise metric: [Verb] + [Tech] + [what you built/changed] + [technical or business outcome in plain language]
+
+Good (natural):
+- "Optimized PostgreSQL reporting queries to reduce latency and improve analytics responsiveness for operations teams."
+- "Refactored batch scoring jobs into event-driven workers, cutting end-to-end processing time by about a third during peak load."
+
+Avoid (over-polished / synthetic):
+- Forcing an exact % on every bullet
+- Over-specific marketing-style KPIs on routine engineering work (e.g., "improving dashboard freshness for stakeholders by 45% during peak traffic windows" unless clearly supported by details)
 
 Verbs: Architected, Engineered, Designed, Built, Developed, Implemented, Optimized, Enhanced, Led, Spearheaded, Automated, Deployed
 
@@ -806,7 +829,7 @@ Before output:
 - Resume reads like ONE consistent career
 - No keyword injection without context
 - No unrealistic stack inflation
-- Metrics are varied and believable
+- Impact mix is realistic (not every bullet has a KPI; metrics are varied, imperfect, and believable)
 - Company context is preserved
 - Tech matches timeline realism
 - Keywords are natural, not forced
