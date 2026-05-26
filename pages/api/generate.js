@@ -5,6 +5,58 @@ import fs from "fs";
 import path from "path";
 import Handlebars from "handlebars";
 import * as jsonc from "jsonc-parser";
+import { jsonrepair } from "jsonrepair";
+
+const RESUME_SYSTEM_PROMPT = `You output ONLY a single valid JSON object. No markdown, no code fences, no explanation text.
+Required keys: title (string), summary (string, one line only — sentences separated by spaces, no line breaks), skills (object mapping category names to string arrays), experience (array of {title: string, details: string[]}).
+Escape double quotes inside strings as \\". No trailing commas.`;
+
+const RESUME_JSON_SCHEMA = {
+  name: "resume_content",
+  strict: true,
+  schema: {
+    type: "object",
+    properties: {
+      title: { type: "string" },
+      summary: { type: "string" },
+      skills: {
+        type: "object",
+        additionalProperties: {
+          type: "array",
+          items: { type: "string" },
+        },
+      },
+      experience: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            title: { type: "string" },
+            details: {
+              type: "array",
+              items: { type: "string" },
+            },
+          },
+          required: ["title", "details"],
+          additionalProperties: false,
+        },
+      },
+    },
+    required: ["title", "summary", "skills", "experience"],
+    additionalProperties: false,
+  },
+};
+
+const normalizeJsonText = (text) =>
+  text
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/\uFEFF/g, "");
+
+const buildRetryPrompt = (prompt) =>
+  `${prompt}
+
+IMPORTANT RETRY: Return ONLY valid JSON. Keep the same content requirements (skills count, bullet counts per job, summary length, word counts). Do not reduce scope. Summary must be one line with sentences separated by spaces. Escape double quotes inside strings as \\".`;
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -242,38 +294,68 @@ const escapeControlCharsInJsonStrings = (jsonText) => {
   return result;
 };
 
+const parseJsonCandidate = (candidate) => {
+  try {
+    return JSON.parse(candidate);
+  } catch {
+    // continue
+  }
+
+  try {
+    return JSON.parse(jsonrepair(candidate));
+  } catch {
+    // continue
+  }
+
+  const jsoncErrors = [];
+  const jsoncResult = jsonc.parse(candidate, jsoncErrors);
+  if (jsoncErrors.length === 0 && jsoncResult !== undefined) {
+    return jsoncResult;
+  }
+
+  return null;
+};
+
 const tryParseResumeJson = (rawContent) => {
-  let content = rawContent
+  if (!rawContent || !String(rawContent).trim()) {
+    return { ok: false, error: "Empty AI response" };
+  }
+
+  let content = normalizeJsonText(String(rawContent))
     .replace(/```(?:json|javascript)?\s*/gi, "")
     .replace(/```\s*/g, "")
     .replace(/^(here is|here's|this is|the json is):?\s*/gi, "")
     .trim();
 
+  const candidates = [];
+  if (content.startsWith("{")) {
+    candidates.push(content);
+  }
+
   const extracted = extractJsonObject(content);
-  if (!extracted) {
+  if (extracted && !candidates.includes(extracted)) {
+    candidates.push(extracted);
+  }
+
+  if (!candidates.length) {
     return { ok: false, error: "No JSON object found in response" };
   }
 
-  const attempts = [
-    extracted,
-    extracted.replace(/,(\s*[}\]])/g, "$1").replace(/,\s*,/g, ","),
-    escapeControlCharsInJsonStrings(extracted),
-    escapeControlCharsInJsonStrings(
-      extracted.replace(/,(\s*[}\]])/g, "$1").replace(/,\s*,/g, ",")
-    ),
-  ];
+  for (const base of candidates) {
+    const variants = [
+      base,
+      base.replace(/,(\s*[}\]])/g, "$1").replace(/,\s*,/g, ","),
+      escapeControlCharsInJsonStrings(base),
+      escapeControlCharsInJsonStrings(
+        base.replace(/,(\s*[}\]])/g, "$1").replace(/,\s*,/g, ",")
+      ),
+    ];
 
-  for (const candidate of attempts) {
-    try {
-      return { ok: true, data: JSON.parse(candidate) };
-    } catch {
-      // continue
-    }
-
-    const jsoncErrors = [];
-    const jsoncResult = jsonc.parse(candidate, jsoncErrors);
-    if (jsoncErrors.length === 0 && jsoncResult !== undefined) {
-      return { ok: true, data: jsoncResult };
+    for (const candidate of variants) {
+      const data = parseJsonCandidate(candidate);
+      if (data && typeof data === "object") {
+        return { ok: true, data };
+      }
     }
   }
 
@@ -299,23 +381,58 @@ const normalizeResumeContent = (resumeContent) => {
   return resumeContent;
 };
 
+const getOpenAIMessageText = (choice) => {
+  const message = choice?.message;
+  if (!message) return "";
+
+  if (message.refusal) {
+    console.warn("OpenAI refusal:", message.refusal);
+    return "";
+  }
+
+  const content = message.content;
+  if (typeof content === "string") return content.trim();
+  if (Array.isArray(content)) {
+    return content
+      .map((part) => {
+        if (typeof part === "string") return part;
+        return part?.text ?? "";
+      })
+      .join("")
+      .trim();
+  }
+
+  return "";
+};
+
+const isJsonSchemaUnsupported = (err) => {
+  const msg = `${err?.message || ""} ${err?.error?.message || ""}`.toLowerCase();
+  return (
+    err?.status === 400 &&
+    (msg.includes("json_schema") ||
+      msg.includes("response_format") ||
+      msg.includes("structured outputs"))
+  );
+};
+
 // Call OpenAI with timeout & retries
 async function callOpenAI(promptOrMessages, options = {}) {
   const {
     model = null,
-    maxTokens = 8192,
+    maxTokens = 16384,
     retries = 2,
     timeoutMs = 180000,
     jsonMode = false,
+    useSchema = false,
   } = options;
   let attemptsLeft = retries;
+
   while (attemptsLeft > 0) {
     try {
       if (!process.env.OPENAI_API_KEY) {
         throw new Error("Missing OPENAI_API_KEY");
       }
 
-      // Build messages for OpenAI Chat Completions
       let messages = [];
 
       if (typeof promptOrMessages === "string") {
@@ -339,40 +456,136 @@ async function callOpenAI(promptOrMessages, options = {}) {
         messages = [{ role: "user", content: String(promptOrMessages) }];
       }
 
-      const apiParams = {
+      const baseParams = {
         model: model || process.env.OPENAI_MODEL || "gpt-5-mini",
         max_completion_tokens: maxTokens,
         temperature: 1,
         messages,
       };
 
+      const formatAttempts = [];
+      if (jsonMode && useSchema) {
+        formatAttempts.push({
+          response_format: {
+            type: "json_schema",
+            json_schema: RESUME_JSON_SCHEMA,
+          },
+        });
+      }
       if (jsonMode) {
-        apiParams.response_format = { type: "json_object" };
+        formatAttempts.push({ response_format: { type: "json_object" } });
+      }
+      formatAttempts.push({});
+
+      let lastFormatError = null;
+      for (const formatParams of formatAttempts) {
+        try {
+          const completion = await Promise.race([
+            openai.chat.completions.create({ ...baseParams, ...formatParams }),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error("OpenAI request timed out")), timeoutMs)
+            ),
+          ]);
+
+          const choice = completion.choices?.[0];
+          const text = getOpenAIMessageText(choice);
+
+          return {
+            content: [{ type: "text", text }],
+            stop_reason: choice?.finish_reason ?? "stop",
+            usage: completion.usage
+              ? {
+                  input_tokens: completion.usage.prompt_tokens,
+                  output_tokens: completion.usage.completion_tokens,
+                }
+              : undefined,
+            model: completion.model,
+          };
+        } catch (err) {
+          if (formatParams.response_format && isJsonSchemaUnsupported(err)) {
+            lastFormatError = err;
+            console.warn("Structured output format failed, trying fallback:", err.message);
+            continue;
+          }
+          throw err;
+        }
       }
 
-      const completion = await Promise.race([
-        openai.chat.completions.create(apiParams),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("OpenAI request timed out")), timeoutMs)
-        ),
-      ]);
-
-      // Normalize to a shape similar to Anthropic response for downstream code
-      const choice = completion.choices?.[0];
-      return {
-        content: [{ type: "text", text: choice?.message?.content ?? "" }],
-        stop_reason: choice?.finish_reason ?? "stop",
-        usage: completion.usage
-          ? { input_tokens: completion.usage.prompt_tokens, output_tokens: completion.usage.completion_tokens }
-          : undefined,
-        model: completion.model,
-      };
+      throw lastFormatError || new Error("OpenAI request failed");
     } catch (err) {
       attemptsLeft--;
       if (attemptsLeft === 0) throw err;
-      console.log(`Retrying... (${attemptsLeft} attempts left)`);
+      console.log(`Retrying OpenAI call... (${attemptsLeft} attempts left)`);
     }
   }
+}
+
+async function repairResumeJsonWithAI(brokenJsonText, callOptions) {
+  const snippet = brokenJsonText.slice(0, 20000);
+  const repairMessages = [
+    {
+      role: "system",
+      content:
+        "You fix malformed JSON. Return ONLY a valid JSON object with keys: title, summary, skills, experience. No markdown.",
+    },
+    {
+      role: "user",
+      content: `Repair this into valid JSON. Preserve all resume content. Output JSON only:\n\n${snippet}`,
+    },
+  ];
+
+  const response = await callOpenAI(repairMessages, {
+    ...callOptions,
+    jsonMode: true,
+    useSchema: false,
+    maxTokens: 16384,
+  });
+
+  return response.content?.[0]?.text ?? "";
+}
+
+async function generateResumeContent(userPrompt, callOptions) {
+  const messages = [
+    { role: "system", content: RESUME_SYSTEM_PROMPT },
+    { role: "user", content: userPrompt },
+  ];
+
+  const run = async (msgs, opts) => {
+    const response = await callOpenAI(msgs, opts);
+    return {
+      text: response.content?.[0]?.text ?? "",
+      response,
+    };
+  };
+
+  let { text, response } = await run(messages, { ...callOptions, useSchema: true });
+
+  if (!text) {
+    console.warn("Empty AI response on first attempt, retrying...");
+    ({ text, response } = await run(messages, { ...callOptions, useSchema: false }));
+  }
+
+  let parsed = tryParseResumeJson(text);
+  if (parsed.ok) return { data: parsed.data, response };
+
+  console.log("🔄 Retry after JSON parse failure (same content requirements)...");
+  const retryMessages = [
+    { role: "system", content: RESUME_SYSTEM_PROMPT },
+    { role: "user", content: buildRetryPrompt(userPrompt) },
+  ];
+  ({ text, response } = await run(retryMessages, { ...callOptions, useSchema: true }));
+
+  parsed = tryParseResumeJson(text);
+  if (parsed.ok) return { data: parsed.data, response };
+
+  if (text) {
+    console.log("🔄 JSON repair pass...");
+    const repairedText = await repairResumeJsonWithAI(text, callOptions);
+    parsed = tryParseResumeJson(repairedText);
+    if (parsed.ok) return { data: parsed.data, response };
+  }
+
+  return { data: null, response, text, error: parsed.error || "Unknown parse error" };
 }
 
 export default async function handler(req, res) {
@@ -401,6 +614,10 @@ export default async function handler(req, res) {
     }
 
     const yearsOfExperience = Math.max(8, calculateYears(profileData.experience) - 1);
+    const jdForPrompt =
+      typeof jd === "string" && jd.length > 8000
+        ? `${jd.slice(0, 8000)}\n\n[Job description truncated for length.]`
+        : jd;
 
     // AI PROMPT: Realism-first ATS resume generation
     const prompt = `Realism-first ATS resume expert. Generate resume JSON: {"title":"...","summary":"...","skills":{...},"experience":[...]}
@@ -424,7 +641,7 @@ ${profileData.experience.map((job, idx) => {
 ${profileData.education.map(edu => `${edu.degree}, ${edu.school} (${edu.start_year}-${edu.end_year})`).join('\n')}
 
 **JOB DESCRIPTION:**
-${jd}
+${jdForPrompt}
 
 **INSTRUCTIONS (REALISM-FIRST ATS ENGINE)**
 
@@ -607,56 +824,41 @@ JSON RULES:
 `;
 
     const callOptions = { jsonMode: true };
-    const aiResponse = await callOpenAI(prompt, callOptions);
-    
-    // Log token usage to debug if we're hitting limits
+    const { data: resumeData, response: aiResponse, text: rawAiText, error: parseError } =
+      await generateResumeContent(prompt, callOptions);
+
     console.log("OpenAI API Response Metadata:");
-    console.log("- Model:", aiResponse.model);
-    const finishReason = aiResponse.stop_reason;
-    console.log("- Stop reason:", finishReason);
-    console.log("- Input tokens:", aiResponse.usage?.input_tokens);
-    console.log("- Output tokens:", aiResponse.usage?.output_tokens);
-    
-    const getTextContent = (response) =>
-      (response.content || []).map((part) => part?.text || "").join("").trim();
+    console.log("- Model:", aiResponse?.model);
+    console.log("- Stop reason:", aiResponse?.stop_reason);
+    console.log("- Input tokens:", aiResponse?.usage?.input_tokens);
+    console.log("- Output tokens:", aiResponse?.usage?.output_tokens);
 
-    let content = getTextContent(aiResponse);
-
-    if (finishReason === "length") {
+    if (aiResponse?.stop_reason === "length") {
       console.error("⚠️ WARNING: OpenAI hit the max_tokens limit! Response may be truncated.");
     }
 
-    // Check if AI is apologizing instead of returning JSON
-    if (content.toLowerCase().startsWith("i'm sorry") || 
-        content.toLowerCase().startsWith("i cannot") || 
-        content.toLowerCase().startsWith("i apologize")) {
-      console.error("AI is apologizing instead of returning JSON:", content.substring(0, 200));
-      throw new Error("AI refused to generate resume. The prompt may be too complex. Please try again with a shorter job description or simpler requirements.");
-    }
-    
-    let parsed = tryParseResumeJson(content);
-
-    if (!parsed.ok) {
-      console.log("🔄 Retrying with reduced requirements after JSON parse failure...");
-      const concisePrompt = prompt
-        .replace(/25-30 words/g, "25-30 words");
-
-      const retryResponse = await callOpenAI(concisePrompt, callOptions);
-      console.log("Retry stop reason:", retryResponse.stop_reason);
-      content = getTextContent(retryResponse);
-      parsed = tryParseResumeJson(content);
+    const rawContent = rawAiText || "";
+    if (
+      rawContent.toLowerCase().startsWith("i'm sorry") ||
+      rawContent.toLowerCase().startsWith("i cannot") ||
+      rawContent.toLowerCase().startsWith("i apologize")
+    ) {
+      console.error("AI is apologizing instead of returning JSON:", rawContent.substring(0, 200));
+      throw new Error(
+        "AI refused to generate resume. The prompt may be too complex. Please try again with a shorter job description or simpler requirements."
+      );
     }
 
-    if (!parsed.ok) {
+    if (!resumeData) {
       console.error("=== JSON PARSE ERROR ===");
-      console.error("Error:", parsed.error);
-      console.error("Content length:", content.length);
-      console.error("First 1000 chars:", content.substring(0, 1000));
-      console.error("Last 500 chars:", content.substring(Math.max(0, content.length - 500)));
+      console.error("Error:", parseError);
+      console.error("Content length:", rawContent.length);
+      console.error("First 1000 chars:", rawContent.substring(0, 1000));
+      console.error("Last 500 chars:", rawContent.substring(Math.max(0, rawContent.length - 500)));
       throw new Error("AI did not return valid JSON format. Please try again.");
     }
 
-    let resumeContent = normalizeResumeContent(parsed.data);
+    let resumeContent = normalizeResumeContent(resumeData);
     
     // Validate required fields
     if (!resumeContent.title || !resumeContent.summary || !resumeContent.skills || !resumeContent.experience) {
