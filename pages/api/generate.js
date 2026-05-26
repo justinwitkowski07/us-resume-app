@@ -56,7 +56,7 @@ const normalizeJsonText = (text) =>
 const buildRetryPrompt = (prompt) =>
   `${prompt}
 
-IMPORTANT RETRY: Return ONLY valid JSON. Keep the same content requirements (skills count, bullet counts per job, summary length, word counts). Do not reduce scope. Summary must be one line with sentences separated by spaces. Escape double quotes inside strings as \\".`;
+IMPORTANT RETRY: Return ONLY valid JSON. Keep the same content requirements (skills count, bullet counts per job, summary length, word counts, full Tier-1 JD coverage in recent experience bullets). Do not reduce scope or weaken bullets. Summary must be one line with sentences separated by spaces. Escape double quotes inside strings as \\".`;
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -676,13 +676,38 @@ TRACK RULES:
   - Full stack / frontend / backend: product engineering, APIs, UI, system design as appropriate to sub-track
 - If candidate history does not support the target track, stay closest to real history and use adjacent, honest framing — never invent a different career.
 
-**1. DOMAIN KEYWORDS (CONTEXT-AWARE ONLY)**
+**1. JD DEEP ANALYSIS (MANDATORY — DO THIS BEFORE WRITING ANY SECTION)**
 
-Extract 8-15 relevant keywords from JD.
+Read the full JOB DESCRIPTION and TARGET ROLE. Build an internal requirement map (do not output this map — use it to drive summary, skills, and experience).
+
+A) REQUIREMENT INVENTORY — extract ALL of:
+- Must-have skills (hard requirements: languages, frameworks, cloud, tools, methodologies)
+- Must-have experience areas (e.g., "CI/CD ownership", "ETL pipelines", "Salesforce integrations", "LLM production", "performance testing at scale")
+- Nice-to-have / preferred skills and experiences
+- Responsibilities (what they expect you to do day-to-day)
+- Seniority signals: years required, scope words (lead, architect, mentor, own, design, hands-on, expert, proven)
+- Level indicators per requirement:
+  - exposure / familiarity (used, supported, participated)
+  - hands-on / production (built, deployed, maintained, operated)
+  - ownership / leadership (designed, led, defined standards, mentored, owned end-to-end)
+  - expert / strategic (architected, scaled, multi-team, multi-year systems)
+
+B) PRIORITIZE:
+- Tier 1 (MUST COVER): explicit "required", "must have", minimum years, core responsibilities, repeated emphasis in JD
+- Tier 2 (SHOULD COVER): "preferred", "nice to have", secondary responsibilities
+- Tier 3 (OPTIONAL): vague or generic items only if candidate history supports
+
+C) LEVEL TARGET:
+Infer the seniority level the JD expects (e.g., mid, senior, staff) from years, title, and scope language.
+Every experience bullet for recent roles (most recent 1-2 jobs) must read at or above that level — never generic junior phrasing for a senior JD.
+
+**1B. DOMAIN KEYWORDS (FROM JD ANALYSIS)**
+
+Extract 12-20 Tier-1/Tier-2 keywords and phrases from the requirement map (skills + experience areas + domain terms).
 
 CORE RULE (IMPORTANT):
-Domain keywords are NOT mandatory or universal.
-Include ONLY IF:
+Domain keywords are NOT mandatory or universal in isolation.
+Include in resume ONLY IF:
 - Supported by candidate experience OR
 - Clearly implied by company domain OR
 - Explicitly required by JD AND realistically align with role scope
@@ -742,13 +767,13 @@ Prefer TARGET ROLE wording when it matches history; otherwise closest honest tit
 Write exactly 5-6 complete sentences as one flowing paragraph. Each sentence should be rich and 15-25 words. Do NOT write short one-clause fragments.
 SUMMARY JSON RULE: "summary" must be ONE single-line string (all sentences joined with spaces). Never put line breaks inside the summary value.
 
-STRUCTURE (one full sentence each — adapt emphasis to detected track, not always full stack):
-- Sentence 1: [Title] with ${yearsOfExperience}+ years of experience in [track-appropriate scope] (e.g., quality engineering systems, cloud platforms, data pipelines, ML products, Salesforce solutions, or scalable web applications)
-- Sentence 2: Core expertise in 1-2 primary technologies for THIS track, and how they were applied in real systems
-- Sentence 3: Flagship achievement with metric when plausible — outcome must match track (e.g., test coverage/defect escape rate for QA; pipeline reliability for data; deployment frequency for DevOps; model accuracy/latency for AI; release velocity for Salesforce)
-- Sentence 4: Secondary technical depth natural to the track (not generic full stack filler)
-- Sentence 5: Supporting strengths (collaboration, CI/CD, cloud, compliance, stakeholder partnership) framed for the track
-- Sentence 6 (optional — use for 6-sentence summaries only): Leadership, Agile delivery, mentoring, and forward-looking focus aligned to JD
+STRUCTURE (one full sentence each — adapt emphasis to detected track; weave in top Tier-1 JD requirements):
+- Sentence 1: [Title] with ${yearsOfExperience}+ years of experience in [track-appropriate scope matching JD domain]
+- Sentence 2: Core expertise in 2-3 Tier-1 JD technologies/skills, with how they were applied at production/ownership level (match JD seniority)
+- Sentence 3: Flagship achievement with metric when plausible — must reflect a Tier-1 JD responsibility area
+- Sentence 4: Secondary Tier-1 or Tier-2 depth (architecture, data, infra, testing, ML, Salesforce platform — per track)
+- Sentence 5: Remaining Tier-1 experience areas (scale, reliability, integrations, compliance, etc.) at credible depth
+- Sentence 6 (optional — use for 6-sentence summaries only): Leadership/mentoring/Agile + forward-looking alignment to JD priorities
 
 TRACK TONE EXAMPLES (adapt to candidate/JD — do not copy verbatim):
 - Full stack: product features across API and UI, system design, delivery metrics
@@ -766,9 +791,14 @@ RULES:
 - Mix impact levels naturally: small (10-20%), medium (20-50%), rare high (50%+)
 - FORBIDDEN: choppy summaries like "Core expertise in X and Y." as a standalone tiny line
 
-**4. SKILLS (REAL-WORLD STACK MODEL — TRACK-SPECIFIC CATEGORIES)**
+**4. SKILLS (REAL-WORLD STACK MODEL — TRACK-SPECIFIC + JD-ALIGNED)**
 
 60-80 skills across 5-8 categories. Category NAMES and contents must match the detected track.
+
+JD ALIGNMENT:
+- Every Tier-1 must-have skill from section 1 must appear in skills (use exact JD phrasing where reasonable for ATS)
+- Tier-2 preferred skills: include when plausible from history
+- Order categories so Tier-1 skills appear early within each category
 
 Use track-appropriate category sets (pick one set; do not mix unrelated stacks):
 - Full stack / frontend / backend: Languages, Frontend, Backend/APIs, Databases, Cloud/DevOps (if used), Practices/Tools
@@ -789,39 +819,90 @@ STRICT RULES:
 - No repeated keywords across categories
 - Must match: job timeline, company type, industry maturity, and detected track
 
-**5. EXPERIENCE (REALISM-FIRST ENGINE)**
+**5. EXPERIENCE (JD-DRIVEN COVERAGE + LEVEL-CALIBRATED ENGINE)**
 
 ${profileData.experience.length} entries. Bullet count by seniority (most recent job = entry 1):
 
 BULLET COUNT BY LEVEL:
-- Recent senior-level roles (most recent 1-2 jobs; e.g., Senior/Lead/Principal/Staff Engineer, Architect, SDET, DevOps/SRE, Data Engineer, ML Engineer): 6-8 bullets
+- Recent senior-level roles (most recent 1-2 jobs; e.g., Senior/Lead/Principal/Staff Engineer, Architect, SDET, DevOps/SRE, Data Engineer, ML Engineer): 7-8 bullets
 - Mid-level roles (middle career; e.g., Engineer, Developer, QA Engineer, Analyst without senior prefix): 5-7 bullets
 - Early-level roles (oldest jobs; e.g., Junior, Intern, Associate, first industry roles): 4-6 bullets
 
 Use job title, dates, and position in work history to pick the correct range per entry.
 
+**5A. JD REQUIREMENT COVERAGE (CRITICAL — FIXES MISSING/WEAK EXPERIENCE)**
+
+Using the JD requirement map from section 1:
+
+COVERAGE RULES:
+- ALL Tier-1 must-have skills AND experience areas must appear somewhere across the resume — prioritize most recent 1-2 jobs.
+- At least 70% of Tier-2 preferred items should appear if plausible from candidate history.
+- Do NOT leave obvious JD must-haves unaddressed in recent roles when candidate details or title make them plausible.
+- Spread coverage across bullets — one bullet can satisfy 2-3 related requirements if written with enough depth.
+- If a Tier-1 requirement is not in provided Details, reframe adjacent real work at the required LEVEL (see 5B) — do not skip silently and do not invent unrelated systems.
+
+ALLOCATION (most recent job = entry 1):
+- Entry 1: cover 60-70% of Tier-1 requirements (highest JD alignment)
+- Entry 2: cover remaining Tier-1 + key Tier-2 items not yet shown
+- Older entries: foundational evidence for long-running requirements (years of experience, early adoption) — lighter JD tailoring, still credible
+
+Before finalizing, mentally verify: for each Tier-1 item, which bullet proves it? If none -> add or strengthen a bullet in entry 1 or 2.
+
+**5B. SENIORITY & DEPTH CALIBRATION (REQUIRED LEVEL IN EVERY BULLET)**
+
+Match bullet depth to JD level target AND job seniority in work history.
+
+Each bullet MUST include enough substance to prove competence — not a name-drop. Include ALL that apply:
+1. Scope: what system/product/pipeline/test suite/platform (specific, not "the application")
+2. Action: designed | architected | led | built | owned | automated | optimized (verb matches seniority)
+3. Technology: named tools/stacks from JD when authentic for that job's dates
+4. Mechanism: HOW work was done (patterns, architecture, approach — 1 concrete detail)
+5. Scale or complexity: users, requests, data volume, services, environments, teams, release frequency — when plausible
+6. Outcome: business or engineering result (metric optional but outcome required)
+
+LEVEL LANGUAGE (use what JD expects):
+- JD wants senior/staff/lead -> bullets show ownership, design decisions, cross-team influence, standards, mentoring, end-to-end delivery
+- JD wants mid -> bullets show independent feature/system delivery, production responsibility, collaboration
+- JD wants exposure only -> still write confidently but scope smaller (supporting, contributing, implementing under lead)
+
+WEAK BULLET PATTERNS (FORBIDDEN — these fail JD level):
+- "Worked with React and Node.js on various projects."
+- "Experience with AWS and Docker."
+- "Familiar with CI/CD and agile methodologies."
+- "Helped improve performance and code quality."
+- "Used Kubernetes in the environment."
+- One technology mentioned with no action, scope, or outcome
+
+STRONG BULLET PATTERN (TARGET):
+[Strong verb] + [specific system/scope] + [named tech + mechanism] + [scale/complexity] + [outcome]
+
+Example (senior full stack): "Architected a React and Node.js order orchestration service with event-driven workers and Redis caching, sustaining 12k+ peak orders/hour while cutting p95 checkout latency materially for holiday traffic."
+
+Example (senior QA): "Led Playwright and API contract test automation in GitLab CI with parallel sharding across 40+ microservices, blocking regressions pre-release and reducing production defect escape rate for payments flows."
+
 CORE PRINCIPLE:
-Experience must reflect: company scale, industry type, time period tech adoption, realistic seniority growth.
+Experience must reflect: JD Tier-1 coverage, company scale, industry type, time period tech adoption, realistic seniority growth.
 
 DETAIL-BASED BULLETS (CRITICAL):
-1. Start from provided Details - For any job with "Details", derive bullets from those accomplishments (do not invent unrelated work).
-2. Align to JD naturally - Tailor wording and emphasis to JD where authentic; never force unsupported keywords.
-3. Maintain authenticity - Keep core accomplishments, seniority, and technologies from provided details.
-4. If no details provided - Generate plausible bullets from job title, company, dates, and JD while staying realistic.
+1. Start from provided Details — For any job with "Details", derive bullets from those accomplishments; expand with JD-required depth and coverage where authentic.
+2. JD-first for recent roles — Entry 1-2 bullets must explicitly prove Tier-1 requirements at the required level.
+3. Maintain authenticity — Keep core accomplishments, seniority, and technologies from provided details; enhance framing and missing JD coverage, do not replace real work with fiction.
+4. If no details provided — Generate plausible bullets from job title, company, dates, and JD; still satisfy Tier-1 coverage for entry 1-2.
 
-Each bullet should be rich and between 25-30 words.
+Each bullet should be rich and between 28-35 words (longer if needed to prove level — never shorten into vague bullets).
 
-STRUCTURE PER JOB (adapt to detected track):
-- Default (product engineering): 1 system-level ownership (if justified) + 2-3 delivery + 2-3 optimization/collaboration
-- QA/SDET: test strategy/automation + coverage across UI/API + CI quality gates + defect prevention/release confidence
-- DevOps/SRE: platform/CI/CD + reliability/observability + automation/IaC + incident/cost/scale outcomes
-- Data: pipeline/warehouse + modeling/quality + analytics enablement + performance/reliability
-- AI/ML: problem framing + model/training or inference + evaluation/MLOps + production impact
-- Salesforce: solution design + declarative/programmatic build + integrations + release/adoption outcomes
+STRUCTURE PER JOB (adapt to detected track — ensure Tier-1 areas each have at least one bullet in recent jobs):
+- Default (product engineering): 1-2 system-level ownership + 2-3 delivery aligned to JD responsibilities + 2-3 optimization/integration/collaboration proving remaining Tier-1 skills
+- QA/SDET: test strategy/automation + coverage across UI/API/performance/security as JD requires + CI quality gates + defect/release metrics
+- DevOps/SRE: platform/CI/CD + IaC/observability + reliability/incident + scale/cost/security as JD requires
+- Data: pipelines/warehouse + modeling/quality + analytics/SLAs + tooling JD names (Spark, dbt, Airflow, etc.)
+- AI/ML: problem + model lifecycle + MLOps/evaluation + production impact for each JD ML requirement
+- Salesforce: declarative + programmatic + integrations + release/adoption for each JD platform requirement
 
-KEYWORD RULE:
-- Max 1-2 JD keywords per bullet
-- 30% bullets must NOT contain explicit keywords (implicit mapping allowed)
+KEYWORD RULE (coverage-aware):
+- Recent job bullets: explicitly name Tier-1 technologies and experience areas — natural prose, not comma lists
+- Max 2-3 JD terms per bullet when needed to prove depth; avoid repeating the same term in consecutive bullets
+- Older jobs: fewer explicit JD terms; show career progression toward Tier-1 skills
 
 METRIC & IMPACT REALISM (CRITICAL):
 - Do NOT put a precise KPI in every bullet. Real resumes mix impact types.
@@ -838,7 +919,7 @@ METRIC & IMPACT REALISM (CRITICAL):
   - 10-20% improvements -> common
   - 20-50% improvements -> standard
   - 50%+ improvements -> rare
-  - 2x-3x -> max 1-2 per entire resume
+  - 2x-3x -> max 3-4 per entire resume
 
 **6. TECHNOLOGY REALISM RULE (STRICT)**
 
@@ -887,11 +968,14 @@ Verbs: Architected, Engineered, Designed, Built, Developed, Implemented, Optimiz
 
 Avoid: Responsible for, Worked on
 
-**10. ATS + REALISM CHECKLIST**
+**10. ATS + REALISM + JD COVERAGE CHECKLIST**
 
 Before output:
 - Resume is tailored to TARGET ROLE + detected track (not generic full stack by default)
-- Each bullet is rich and between 25-30 words
+- Every Tier-1 JD must-have skill and experience area is demonstrated in recent roles (entry 1-2) at the required level
+- No Tier-1 gap: if JD requires X, at least one bullet shows hands-on or ownership of X — not "exposure" wording unless JD is junior
+- Each bullet is rich (28-35 words) with scope + action + tech + mechanism + outcome — no weak name-drop bullets
+- Recent bullets match JD seniority (senior JD -> ownership/design/lead language, not helper-level phrasing)
 - Resume reads like ONE consistent career for that track
 - No keyword injection without context
 - No unrealistic stack inflation
@@ -899,7 +983,7 @@ Before output:
 - Company context is preserved
 - Tech matches timeline realism
 - Keywords are natural, not forced
-- Balance exists between ATS and human readability
+- Balance exists between ATS depth and human readability — depth beats brevity for entry 1-2
 
 **OUTPUT (STRICT)**
 
