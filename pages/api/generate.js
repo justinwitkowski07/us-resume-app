@@ -619,10 +619,14 @@ export default async function handler(req, res) {
         ? `${jd.slice(0, 8000)}\n\n[Job description truncated for length.]`
         : jd;
 
-    // AI PROMPT: Realism-first ATS resume generation
-    const prompt = `Realism-first ATS resume expert. Generate resume JSON: {"title":"...","summary":"...","skills":{...},"experience":[...]}
+    // AI PROMPT: Realism-first ATS resume generation (all SWE tracks)
+    const prompt = `Realism-first ATS resume expert for software engineering roles across all tracks (full stack, frontend, backend, QA/SDET, AI/ML, DevOps/SRE, data engineering/analytics, Salesforce, platform, security, and general software engineer). Generate resume JSON: {"title":"...","summary":"...","skills":{...},"experience":[...]}
 
 **OUTPUT: ONLY valid JSON, no markdown/explanations.**
+
+**TARGET APPLICATION:**
+Company: ${company}
+Target Role (user input — primary tailoring anchor): ${role}
 
 **PROFILE:**
 Candidate: ${profileData.name} | ${profileData.email} | ${profileData.phone} | ${profileData.location}
@@ -645,6 +649,33 @@ ${jdForPrompt}
 
 **INSTRUCTIONS (REALISM-FIRST ATS ENGINE)**
 
+**0. ROLE TRACK (DETECT FIRST — DRIVES ALL SECTIONS)**
+
+Infer the primary engineering track from TARGET ROLE + JOB DESCRIPTION (use TARGET ROLE when it names a specialty; use JD when TARGET ROLE is generic like "Software Engineer").
+
+Supported tracks (pick ONE primary; secondary only if clearly hybrid in JD):
+- fullstack / general software engineer
+- frontend
+- backend / API
+- QA / SDET / test automation
+- AI / ML / LLM / data science (engineering-focused)
+- DevOps / SRE / platform / cloud infrastructure
+- data engineering / analytics engineering / BI engineering
+- Salesforce (developer, admin, consultant, architect)
+- mobile (iOS/Android/cross-platform) — only if JD or history supports it
+- security / AppSec — only if JD or history supports it
+
+TRACK RULES:
+- Tailor title, summary, skills categories, and experience bullets to the detected track — NOT default full stack unless that is the target.
+- Re-weight emphasis per track (examples):
+  - QA/SDET: test strategy, automation frameworks, CI quality gates, regression/performance/API/security testing, defect prevention — NOT feature delivery as primary narrative unless history supports it
+  - DevOps/SRE: CI/CD, IaC, observability, reliability, incident response, cost/performance of platforms — NOT UI feature work unless history supports it
+  - Data: pipelines, warehousing, modeling, SQL/Spark/dbt-style tooling, data quality, batch/stream processing — NOT generic CRUD app features unless history supports it
+  - AI/ML: model lifecycle, training/inference, MLOps, evaluation, responsible AI, production ML systems — NOT listing every LLM buzzword without plausible work
+  - Salesforce: Apex, LWC, Flows, integrations (REST/SOAP), declarative vs programmatic delivery, release management — NOT generic web stack unless history supports it
+  - Full stack / frontend / backend: product engineering, APIs, UI, system design as appropriate to sub-track
+- If candidate history does not support the target track, stay closest to real history and use adjacent, honest framing — never invent a different career.
+
 **1. DOMAIN KEYWORDS (CONTEXT-AWARE ONLY)**
 
 Extract 8-15 relevant keywords from JD.
@@ -662,6 +693,11 @@ VALID USAGE EXAMPLES:
 - GDPR / SOC2 -> ONLY if enterprise/regulatory systems exist
 - HIPAA / FHIR -> ONLY if healthcare domain is explicitly relevant
 - Data Governance -> ONLY if data-heavy systems exist
+- Selenium/Cypress/Playwright/JUnit/TestNG -> ONLY for QA/SDET or test-automation-heavy roles
+- Kubernetes/Terraform/Prometheus -> ONLY for DevOps/SRE/platform roles or clear infra ownership
+- Spark/dbt/Airflow/Snowflake/BigQuery -> ONLY for data engineering/analytics roles
+- Apex/LWC/Salesforce Flows/CPQ -> ONLY for Salesforce roles
+- PyTorch/TensorFlow/LLM/RAG/MLOps -> ONLY for AI/ML roles with plausible ML delivery history
 
 FORBIDDEN:
 - injecting healthcare keywords into non-healthcare companies
@@ -678,33 +714,49 @@ If not supported, replace with neutral equivalents:
 **2. TITLE (CAREER CONSISTENCY LOCK)**
 
 Base Title: Most recent job title (first experience entry)
+Output title: Align to TARGET ROLE and detected track while staying credible vs work history.
 
 RULE:
-Maintain ONE consistent engineering identity across entire resume.
+Maintain ONE consistent engineering identity across entire resume for the detected track.
 
 STRICT RULE:
-Do NOT transform candidate into different career paths unless explicitly supported by experience history.
+Do NOT transform candidate into an unrelated career path unless experience history supports it.
 
-Allowed adjustments ONLY:
-- frontend <-> fullstack
-- backend <-> API/backend specialist
-- devops <-> infrastructure specialist
+Allowed title adjustments WITHIN supported evidence (examples):
+- fullstack <-> frontend <-> backend <-> software engineer
+- QA engineer <-> SDET <-> test automation engineer
+- DevOps engineer <-> SRE <-> platform engineer <-> cloud engineer
+- data engineer <-> analytics engineer <-> BI developer (if data work exists)
+- ML engineer <-> AI engineer <-> applied scientist (engineering) (if ML work exists)
+- Salesforce developer <-> Salesforce admin <-> Salesforce consultant (if CRM platform work exists)
 
-**3. SUMMARY (REALISTIC SENIOR NARRATIVE)**
+FORBIDDEN without evidence:
+- full stack developer -> Salesforce architect
+- QA engineer -> data engineer
+- backend engineer -> DevOps lead (unless infra/CI/CD ownership appears in details)
+
+Prefer TARGET ROLE wording when it matches history; otherwise closest honest title for the track.
+
+**3. SUMMARY (REALISTIC SENIOR NARRATIVE — TRACK-AWARE)**
 
 Write exactly 5-6 complete sentences as one flowing paragraph. Each sentence should be rich and 15-25 words. Do NOT write short one-clause fragments.
 SUMMARY JSON RULE: "summary" must be ONE single-line string (all sentences joined with spaces). Never put line breaks inside the summary value.
 
-STRUCTURE (one full sentence each):
-- Sentence 1: [Title] with ${yearsOfExperience}+ years of experience building [domain-specific systems] (e.g., scalable web and data systems)
-- Sentence 2: Core expertise in 1-2 primary technologies, extended with how they were applied across real systems (backend/frontend/fullstack scope as appropriate)
-- Sentence 3: Flagship achievement with metric, naming the business outcome and technical work (e.g., AI integrations, APIs, automation)
-- Sentence 4: Secondary technical depth (data modeling, databases, pipelines, architecture) tied to scale or system type
-- Sentence 5: Infrastructure/cloud or platform strengths with reliability/maintainability framing
-- Sentence 6 (optional — use for 6-sentence summaries only): Leadership, Agile delivery, mentoring, and forward-looking focus aligned to JD (reliability, performance, automation, LLM/modern stack only if plausible)
+STRUCTURE (one full sentence each — adapt emphasis to detected track, not always full stack):
+- Sentence 1: [Title] with ${yearsOfExperience}+ years of experience in [track-appropriate scope] (e.g., quality engineering systems, cloud platforms, data pipelines, ML products, Salesforce solutions, or scalable web applications)
+- Sentence 2: Core expertise in 1-2 primary technologies for THIS track, and how they were applied in real systems
+- Sentence 3: Flagship achievement with metric when plausible — outcome must match track (e.g., test coverage/defect escape rate for QA; pipeline reliability for data; deployment frequency for DevOps; model accuracy/latency for AI; release velocity for Salesforce)
+- Sentence 4: Secondary technical depth natural to the track (not generic full stack filler)
+- Sentence 5: Supporting strengths (collaboration, CI/CD, cloud, compliance, stakeholder partnership) framed for the track
+- Sentence 6 (optional — use for 6-sentence summaries only): Leadership, Agile delivery, mentoring, and forward-looking focus aligned to JD
 
-STYLE (match this density and tone, adapt to candidate/JD):
-"Senior Lead Software Engineer with 10+ years of experience building scalable web and data systems. Core expertise in Python and Vue.js with strong experience delivering production features across backend and frontend systems. Delivered AI-powered lead automation and API integrations that improved qualified lead conversion by 22%. Experienced in designing PostgreSQL data models and analytics pipelines for high-volume systems. Hands-on with AWS and Terraform to build reliable and maintainable cloud infrastructure. Proven technical leader in Agile teams, mentoring engineers and focused on system reliability, performance optimization, and automation using modern backend and LLM-based solutions."
+TRACK TONE EXAMPLES (adapt to candidate/JD — do not copy verbatim):
+- Full stack: product features across API and UI, system design, delivery metrics
+- QA/SDET: test automation, quality gates, regression/performance testing, release confidence
+- DevOps/SRE: CI/CD, IaC, observability, uptime, incident reduction, platform scale
+- Data: ETL/ELT, warehousing, modeling, data quality, analytics enablement
+- AI/ML: production models, MLOps, evaluation, responsible deployment, business impact from ML
+- Salesforce: declarative + programmatic solutions, integrations, release management, user adoption
 
 RULES:
 - Use connective phrasing: "with strong experience", "Experienced in", "Hands-on with", "Proven technical leader", "Focused on"
@@ -714,29 +766,37 @@ RULES:
 - Mix impact levels naturally: small (10-20%), medium (20-50%), rare high (50%+)
 - FORBIDDEN: choppy summaries like "Core expertise in X and Y." as a standalone tiny line
 
-**4. SKILLS (REAL-WORLD STACK MODEL)**
+**4. SKILLS (REAL-WORLD STACK MODEL — TRACK-SPECIFIC CATEGORIES)**
 
-60-80 skills across 5-8 categories
+60-80 skills across 5-8 categories. Category NAMES and contents must match the detected track.
+
+Use track-appropriate category sets (pick one set; do not mix unrelated stacks):
+- Full stack / frontend / backend: Languages, Frontend, Backend/APIs, Databases, Cloud/DevOps (if used), Practices/Tools
+- QA/SDET: Test Automation, Frameworks & Languages, API/Performance/Security Testing, CI/CD & Quality Engineering, Tools & Practices
+- DevOps/SRE: Cloud Platforms, IaC, Containers/Orchestration, CI/CD, Observability/Reliability, Scripting & Automation
+- Data: SQL & Warehouses, Pipelines/Orchestration, Modeling & Analytics, Cloud Data Services, Engineering Practices
+- AI/ML: ML/DL Frameworks, MLOps & Deployment, Data & Feature Engineering, LLM/NLP (only if plausible), Cloud & Tools
+- Salesforce: Platform (Apex, LWC, Flows), Integrations, Data/CRM, DevOps/Release, Adjacent Enterprise Tools
 
 REALISM PRINCIPLES:
-- 50-60% primary stack (real usage only)
-- 30-40% adjacent/supporting skills
-- 10% aspirational (ONLY if plausible)
+- 50-60% primary stack for the target track (real usage only)
+- 30-40% adjacent/supporting skills for that track
+- 10% aspirational (ONLY if plausible for the role)
 
 STRICT RULES:
-- No "everything engineer" syndrome
-- No conflicting ecosystems (e.g., too many frameworks from unrelated stacks)
+- No "everything engineer" syndrome (e.g., do not list full web stack + full Salesforce + full data stack for a single QA role)
+- No conflicting ecosystems unrelated to the track
 - No repeated keywords across categories
-- Must match: job timeline, company type, industry maturity
+- Must match: job timeline, company type, industry maturity, and detected track
 
 **5. EXPERIENCE (REALISM-FIRST ENGINE)**
 
 ${profileData.experience.length} entries. Bullet count by seniority (most recent job = entry 1):
 
 BULLET COUNT BY LEVEL:
-- Recent senior-level roles (most recent 1-2 jobs; e.g., Senior, Lead, Principal, Staff, Architect): 6-8 bullets
-- Mid-level roles (middle career; e.g., Engineer, Developer, ML Engineer without senior prefix): 5-7 bullets
-- Early-level roles (oldest jobs; e.g., Analyst, Junior, Intern, first industry roles): 4-6 bullets
+- Recent senior-level roles (most recent 1-2 jobs; e.g., Senior/Lead/Principal/Staff Engineer, Architect, SDET, DevOps/SRE, Data Engineer, ML Engineer): 6-8 bullets
+- Mid-level roles (middle career; e.g., Engineer, Developer, QA Engineer, Analyst without senior prefix): 5-7 bullets
+- Early-level roles (oldest jobs; e.g., Junior, Intern, Associate, first industry roles): 4-6 bullets
 
 Use job title, dates, and position in work history to pick the correct range per entry.
 
@@ -751,10 +811,13 @@ DETAIL-BASED BULLETS (CRITICAL):
 
 Each bullet should be rich and between 25-30 words.
 
-STRUCTURE PER JOB:
-- 1 system-level ownership bullet (ONLY if justified)
-- 2-3 feature/engineering delivery bullets
-- 2-3 optimization/maintenance/collaboration bullets
+STRUCTURE PER JOB (adapt to detected track):
+- Default (product engineering): 1 system-level ownership (if justified) + 2-3 delivery + 2-3 optimization/collaboration
+- QA/SDET: test strategy/automation + coverage across UI/API + CI quality gates + defect prevention/release confidence
+- DevOps/SRE: platform/CI/CD + reliability/observability + automation/IaC + incident/cost/scale outcomes
+- Data: pipeline/warehouse + modeling/quality + analytics enablement + performance/reliability
+- AI/ML: problem framing + model/training or inference + evaluation/MLOps + production impact
+- Salesforce: solution design + declarative/programmatic build + integrations + release/adoption outcomes
 
 KEYWORD RULE:
 - Max 1-2 JD keywords per bullet
@@ -810,9 +873,11 @@ Template options (vary across bullets):
 - With metric: [Verb] + [Tech] + [what you built/changed] + [measurable outcome when real]
 - Without precise metric: [Verb] + [Tech] + [what you built/changed] + [technical or business outcome in plain language]
 
-Good (natural):
-- "Optimized PostgreSQL reporting queries to reduce latency and improve analytics responsiveness for operations teams."
-- "Refactored batch scoring jobs into event-driven workers, cutting end-to-end processing time by about a third during peak load."
+Good (natural — vary by track):
+- Full stack/data: "Optimized PostgreSQL reporting queries to reduce latency and improve analytics responsiveness for operations teams."
+- DevOps: "Hardened Kubernetes deployments with Helm and rolling updates, improving release success rate during high-traffic promotion windows."
+- QA: "Built Playwright regression suites integrated into CI, catching critical checkout defects before production and stabilizing release cadence."
+- Salesforce: "Delivered Apex and Flow automation for case routing, reducing manual triage time while keeping governor limits within safe thresholds."
 
 Avoid (over-polished / synthetic):
 - Forcing an exact % on every bullet
@@ -825,8 +890,9 @@ Avoid: Responsible for, Worked on
 **10. ATS + REALISM CHECKLIST**
 
 Before output:
+- Resume is tailored to TARGET ROLE + detected track (not generic full stack by default)
 - Each bullet is rich and between 25-30 words
-- Resume reads like ONE consistent career
+- Resume reads like ONE consistent career for that track
 - No keyword injection without context
 - No unrealistic stack inflation
 - Impact mix is realistic (not every bullet has a KPI; metrics are varied, imperfect, and believable)
