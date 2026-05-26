@@ -714,7 +714,7 @@ If not supported, replace with neutral equivalents:
 **2. TITLE (CAREER CONSISTENCY LOCK)**
 
 Base Title: Most recent job title (first experience entry)
-Output title: Align to TARGET ROLE and detected track while staying credible vs work history.
+Output title: Base Title.
 
 RULE:
 Maintain ONE consistent engineering identity across entire resume for the detected track.
