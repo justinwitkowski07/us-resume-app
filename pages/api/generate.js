@@ -648,12 +648,28 @@ ${jdForPrompt}
 
 **INSTRUCTIONS (REALISM-FIRST ATS ENGINE)**
 
-**GLOBAL — NO TARGET-EMPLOYER REFERENCES (CRITICAL)**
+**GLOBAL — TECHNICAL-ONLY TAILORING (CRITICAL)**
 Tailor ONLY via technical alignment to the JOB DESCRIPTION and TARGET ROLE.
+
+INCLUDE in analysis and resume output:
+- Technical skills, tools, stacks, platforms, methodologies, certifications that are engineering-relevant
+- Technical experience areas and engineering responsibilities from the JD
+- Engineering seniority/scope signals (years of hands-on experience, lead/architect/own/design systems — not HR seniority fluff)
+
+IGNORE completely — do NOT extract, prioritize, or reflect in title, summary, skills, or experience:
+- Work arrangement: remote, hybrid, on-site, office location, relocation, timezone overlap
+- Employment terms: contract length, permanent vs contract, notice period, work authorization, visa sponsorship
+- Spoken/written language requirements: English C1, Polish, bilingual, etc. (programming languages ARE technical — include those)
+- Travel: occasional office visits, % travel, client site visits
+- Soft HR requirements: culture fit, personality traits, "team player", communication skills (unless tied to a technical responsibility like technical leadership or cross-team architecture)
+- Benefits, salary, PTO, equipment, dress code, hours per week
+- Non-technical education requirements unless directly engineering-relevant (e.g., CS degree as proxy for fundamentals — still do not write "fluent in English" in summary)
+
 NEVER mention in title, summary, skills, or experience bullets:
 - The hiring employer name from the JD (even if stated in the job posting)
 - Phrases like "this role", "your team", "your company", "joining [Company]", "excited to contribute at [Company]", or any obvious application-specific tailoring
 - Product/brand names unique to the employer unless they already appear in the candidate's work history Details
+- Any ignored non-technical JD item listed above
 
 Use generic industry/domain language instead (e.g., "e-commerce platforms", "fintech systems", "healthcare data platforms") when domain context helps ATS fit.
 Past employers in WORK history may appear only as employment context — not as flattery toward the company being applied to.
@@ -662,7 +678,7 @@ Past employers in WORK history may appear only as employment context — not as 
 
 Infer the primary engineering track from TARGET ROLE + JOB DESCRIPTION (use TARGET ROLE when it names a specialty; use JD when TARGET ROLE is generic like "Software Engineer").
 
-Supported tracks (pick ONE primary; secondary only if clearly hybrid in JD):
+Supported tracks (pick ONE primary; secondary track only if JD is clearly a hybrid engineering role — NOT remote/hybrid work arrangement):
 - fullstack / general software engineer
 - frontend
 - backend / API
@@ -685,29 +701,30 @@ TRACK RULES:
   - Full stack / frontend / backend: product engineering, APIs, UI, system design as appropriate to sub-track
 - If candidate history does not support the target track, stay closest to real history and use adjacent, honest framing — never invent a different career.
 
-**1. JD DEEP ANALYSIS (MANDATORY — DO THIS BEFORE WRITING ANY SECTION)**
+**1. JD DEEP ANALYSIS — TECHNICAL ONLY (MANDATORY BEFORE WRITING)**
 
-Read the full JOB DESCRIPTION and TARGET ROLE. Build an internal requirement map (do not output this map — use it to drive summary, skills, and experience).
+Read the JOB DESCRIPTION and TARGET ROLE. Strip all non-technical items per GLOBAL rules. Build an internal TECHNICAL requirement map only (do not output this map — use it to drive summary, skills, and experience).
 
-A) REQUIREMENT INVENTORY — extract ALL of:
-- Must-have skills (hard requirements: languages, frameworks, cloud, tools, methodologies)
-- Must-have experience areas (e.g., "CI/CD ownership", "ETL pipelines", "Salesforce integrations", "LLM production", "performance testing at scale")
-- Nice-to-have / preferred skills and experiences
-- Responsibilities (what they expect you to do day-to-day)
-- Seniority signals: years required, scope words (lead, architect, mentor, own, design, hands-on, expert, proven)
+A) TECHNICAL REQUIREMENT INVENTORY — extract ONLY:
+- Must-have technical skills (programming languages, frameworks, cloud, databases, tools, engineering methodologies)
+- Must-have technical experience areas (e.g., "CI/CD ownership", "ETL pipelines", "Salesforce integrations", "LLM production", "performance testing at scale")
+- Nice-to-have / preferred technical skills and experiences
+- Technical responsibilities (engineering work they expect: build, design, test, deploy, monitor, optimize, integrate, etc.)
+- Technical seniority signals: years of relevant hands-on experience, scope words (lead, architect, mentor, own, design, hands-on, expert, proven) in an engineering context
 - Level indicators per requirement:
   - exposure / familiarity (used, supported, participated)
   - hands-on / production (built, deployed, maintained, operated)
   - ownership / leadership (designed, led, defined standards, mentored, owned end-to-end)
   - expert / strategic (architected, scaled, multi-team, multi-year systems)
 
-B) PRIORITIZE:
-- Tier 1 (MUST COVER): explicit "required", "must have", minimum years, core responsibilities, repeated emphasis in JD
-- Tier 2 (SHOULD COVER): "preferred", "nice to have", secondary responsibilities
-- Tier 3 (OPTIONAL): vague or generic items only if candidate history supports
+B) PRIORITIZE (technical items only):
+- Tier 1 (MUST COVER): explicit technical "required"/"must have", minimum years of technical experience, core engineering responsibilities, repeated technical emphasis in JD
+- Tier 2 (SHOULD COVER): preferred technical skills, secondary engineering responsibilities
+- Tier 3 (OPTIONAL): vague or generic technical items only if candidate history supports
+- NEVER promote non-technical JD lines to any tier
 
-C) LEVEL TARGET:
-Infer the seniority level the JD expects (e.g., mid, senior, staff) from years, title, and scope language.
+C) LEVEL TARGET (engineering seniority only):
+Infer technical seniority the JD expects (e.g., mid, senior, staff) from years of technical experience, TARGET ROLE, and engineering scope language — not from HR or logistics sections.
 Every experience bullet for recent roles (most recent 1-2 jobs) must read at or above that level — never generic junior phrasing for a senior JD.
 
 **1B. DOMAIN KEYWORDS (FROM JD ANALYSIS)**
@@ -983,7 +1000,8 @@ Avoid: Responsible for, Worked on
 **10. ATS + REALISM + JD COVERAGE CHECKLIST**
 
 Before output:
-- Resume is tailored to TARGET ROLE + JD technically (not generic full stack by default)
+- Resume is tailored to TARGET ROLE + JD technical requirements only (not generic full stack by default)
+- No non-technical JD items reflected (remote/hybrid, languages, travel, contract terms, etc.)
 - No hiring employer name or application-specific phrases anywhere in generated content
 - Every Tier-1 JD must-have skill and experience area is demonstrated in recent roles (entry 1-2) at the required level
 - No Tier-1 gap: if JD requires X, at least one bullet shows hands-on or ownership of X — not "exposure" wording unless JD is junior
