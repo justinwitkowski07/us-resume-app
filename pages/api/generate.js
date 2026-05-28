@@ -625,8 +625,7 @@ export default async function handler(req, res) {
 **OUTPUT: ONLY valid JSON, no markdown/explanations.**
 
 **TARGET APPLICATION:**
-Company: ${company}
-Target Role (user input — primary tailoring anchor): ${role}
+Target Role (primary tailoring anchor): ${role}
 
 **PROFILE:**
 Candidate: ${profileData.name} | ${profileData.email} | ${profileData.phone} | ${profileData.location}
@@ -648,6 +647,16 @@ ${profileData.education.map(edu => `${edu.degree}, ${edu.school} (${edu.start_ye
 ${jdForPrompt}
 
 **INSTRUCTIONS (REALISM-FIRST ATS ENGINE)**
+
+**GLOBAL — NO TARGET-EMPLOYER REFERENCES (CRITICAL)**
+Tailor ONLY via technical alignment to the JOB DESCRIPTION and TARGET ROLE.
+NEVER mention in title, summary, skills, or experience bullets:
+- The hiring employer name from the JD (even if stated in the job posting)
+- Phrases like "this role", "your team", "your company", "joining [Company]", "excited to contribute at [Company]", or any obvious application-specific tailoring
+- Product/brand names unique to the employer unless they already appear in the candidate's work history Details
+
+Use generic industry/domain language instead (e.g., "e-commerce platforms", "fintech systems", "healthcare data platforms") when domain context helps ATS fit.
+Past employers in WORK history may appear only as employment context — not as flattery toward the company being applied to.
 
 **0. ROLE TRACK (DETECT FIRST — DRIVES ALL SECTIONS)**
 
@@ -709,7 +718,7 @@ CORE RULE (IMPORTANT):
 Domain keywords are NOT mandatory or universal in isolation.
 Include in resume ONLY IF:
 - Supported by candidate experience OR
-- Clearly implied by company domain OR
+- Clearly implied by JD industry/domain (use generic domain terms — never the hiring company name) OR
 - Explicitly required by JD AND realistically align with role scope
 
 VALID USAGE EXAMPLES:
@@ -790,6 +799,7 @@ RULES:
 - NO keyword stacking or repeated buzzwords across sentences
 - Mix impact levels naturally: small (10-20%), medium (20-50%), rare high (50%+)
 - FORBIDDEN: choppy summaries like "Core expertise in X and Y." as a standalone tiny line
+- FORBIDDEN in summary: hiring company name, "this position/role", or any wording that signals the resume was written for one specific employer — stay technically strong and employer-neutral
 
 **4. SKILLS (REAL-WORLD STACK MODEL — TRACK-SPECIFIC + JD-ALIGNED)**
 
@@ -934,9 +944,11 @@ Technology release examples (verify against job dates):
 - Docker: 2013 | Kubernetes: 2014 | AWS Lambda: 2014 | GraphQL: 2015
 - Pre-2013 frontend: jQuery, Backbone.js, AngularJS 1.x | Pre-2013 backend: PHP, Java, .NET, Ruby on Rails
 
-**7. COMPANY CONTEXT RULE (CRITICAL)**
+**7. PAST EMPLOYER CONTEXT RULE (CRITICAL)**
 
-Each company must influence output style:
+"Company" here means each entry in the candidate WORK history — NOT the hiring employer from the JD.
+
+Each past employer must influence bullet style:
 - Enterprise (e.g., Nordstrom): governance, scale, compliance, reliability
 - Mid-size SaaS: feature velocity, optimization, scaling
 - Startup: ownership, rapid iteration, system building
@@ -971,7 +983,8 @@ Avoid: Responsible for, Worked on
 **10. ATS + REALISM + JD COVERAGE CHECKLIST**
 
 Before output:
-- Resume is tailored to TARGET ROLE + detected track (not generic full stack by default)
+- Resume is tailored to TARGET ROLE + JD technically (not generic full stack by default)
+- No hiring employer name or application-specific phrases anywhere in generated content
 - Every Tier-1 JD must-have skill and experience area is demonstrated in recent roles (entry 1-2) at the required level
 - No Tier-1 gap: if JD requires X, at least one bullet shows hands-on or ownership of X — not "exposure" wording unless JD is junior
 - Each bullet is rich (28-35 words) with scope + action + tech + mechanism + outcome — no weak name-drop bullets
