@@ -1,0 +1,48 @@
+{
+  "name": "Marek Hac",
+  "email": "hmarek719@outlook.com",
+  "phone": "",
+  "location": "Rzeszów, Podkarpackie, Poland",
+  "linkedin": "https://www.linkedin.com/in/marek-hac-88ab5940b/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Octave",
+      "title": "Senior Software Engineer",
+      "location": "Madison, Alabama, United States",
+      "start_date": "Jan 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Reef Technologies",
+      "title": "Software Engineer / Tech Lead",
+      "location": "Warsaw, Mazowieckie, Poland",
+      "start_date": "Apr 2021",
+      "end_date": "Dec 2023"
+    },
+    {
+      "company": "Boldare",
+      "title": "Software Engineer",
+      "location": "Gliwice, Silesian Voivodeship, Poland",
+      "start_date": "May 2018",
+      "end_date": "Mar 2021"
+    },
+    {
+      "company": "Savvycom - Software Product Development",
+      "title": "Junior Web Developer",
+      "location": "Vietnam",
+      "start_date": "Nov 2016",
+      "end_date": "Dec 2017"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's degree, Information Technology",
+      "school": "HUTECH - Ho Chi Minh City University of Technology",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}
