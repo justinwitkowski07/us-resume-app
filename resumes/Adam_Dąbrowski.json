@@ -1,0 +1,60 @@
+{
+    "name": "Adam Dąbrowski",
+    "email": "adam.work02@outlook.com",
+    "phone": "",
+    "location": "Warsaw, Mazowieckie, Poland",
+    "linkedin": "https://www.linkedin.com/in/adam-d%C4%85browski-ba39243b2/",
+    "website": "",
+    
+    "experience": [
+       {
+        "company": "Lenovo",
+        "title": "Senior AI Engineer",
+        "location": "Morrisville, North Carolina, United States",
+        "start_date": "2023.04",
+        "end_date": "Present"
+      },
+      {
+        "company": "Quickchat AI",
+        "title": "Senior Machine Learning Engineer",
+        "location": "Warsaw, Mazowieckie, Poland",
+        "start_date": "2021.02",
+        "end_date": "2023.01"
+      },
+      {
+        "company": "Kore.ai",
+        "title": "Machine Learning Engineer",
+        "location": "Orlando, Florida, United States",
+        "start_date": "2017.07",
+        "end_date": "2020.12"
+      },   
+      {
+        "company": "Deviniti",
+        "title": "Data Scientist",
+        "location": "Warsaw, Mazowieckie, Poland",
+        "start_date": "2016.03",
+        "end_date": "2017.04"
+      },   
+      {
+        "company": "Boldare",
+        "title": "Data Analyst Intern",
+        "location": "Warsaw, Mazowieckie, Poland",
+        "start_date": "2015.02",
+        "end_date": "2016.02"
+      }
+    ],
+    "education": [
+      {
+        "degree": "Master of Science, Artificial Intelligence & Data Science",
+        "school": "Florida International University",
+        "start_year": "2018",
+        "end_year": "2020"
+      },
+      {
+        "degree": "Bachelor's Degree, Computer Engineering",
+        "school": "Vistula University",
+        "start_year": "2010",
+        "end_year": "2014"
+      }
+    ]
+  }
