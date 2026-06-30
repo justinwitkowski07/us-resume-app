@@ -1,0 +1,53 @@
+{
+  "name": "Tomasz Kowal",
+  "email": "tomasz.kowal.dev@outlook.com",
+  "phone": "",
+  "location": "Warsaw, Mazowieckie, Poland",
+  "linkedin": "https://www.linkedin.com/in/tomasz-kowal-a893a4414/",
+  "website": "",
+  
+  "experience": [
+     {
+      "company": "Biz4Group LLC",
+      "title": "Senior AI Engineer",
+      "location": "Orlando, Florida",
+      "start_date": "Jul 2023",
+      "end_date": "Present"
+    },
+    {
+      "company": "Startup House",
+      "title": "Machine Learning Engineer",
+      "location": "Warsaw, Mazowieckie",
+      "start_date": "Mar 2020",
+      "end_date": "Jun 2023"
+    },
+    {
+      "company": "Vantagepoint AI, LLC",
+      "title": "Data Scientist",
+      "location": "West Palm Beach, Florida",
+      "start_date": "Mar 2017",
+      "end_date": "Nov 2019"
+    },   
+    {
+      "company": "Deviniti",
+      "title": "Data Analyst",
+      "location": "Warsaw, Mazowieckie",
+      "start_date": "Nov 2015",
+      "end_date": "Dec 2016"
+    }
+  ],
+  "education": [
+    {
+      "degree": "Master of Science, Artificial Intelligence",
+      "school": "University of Central Florida",
+      "start_year": "2017",
+      "end_year": "2019"
+    },
+    {
+      "degree": "Bachelor of Science, Computer Science",
+      "school": "Uczelnia Łazarskiego w Warszawie",
+      "start_year": "2011",
+      "end_year": "2015"
+    }
+  ]
+}
