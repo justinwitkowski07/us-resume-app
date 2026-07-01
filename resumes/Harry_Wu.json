@@ -1,0 +1,47 @@
+{
+  "name": "Harry Wu",
+  "email": "harry.wu.work@outlook.com",
+  "phone": "+61 485979074 (WhatsApp)",
+  "location": "Sydney, New South Wales, Australia",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+     {
+      "company": "Lenovo",
+      "title": "Senior Full Stack Engineer",
+      "location": "Morrisville, North Carolina, United States",
+      "start_date": "Apr 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "4mation Technologies",
+      "title": "Backend Engieering Lead",
+      "location": "Sydney, New South Wales, Australia",
+      "start_date": "Feb 2020",
+      "end_date": "Mar 2024"
+    },
+    {
+      "company": "Sea Limited",
+      "title": "Full Stack Engineer",
+      "location": "Singapore",
+      "start_date": "Feb 2018",
+      "end_date": "Nov 2019"
+    },   
+    {
+      "company": "Grab",
+      "title": "Backend Developer",
+      "location": "Singapore",
+      "start_date": "Nov 2016",
+      "end_date": "Dec 2017"
+    }
+  ],
+  "education": [
+    {
+      "degree": "Bachelor's degree, Information Technology",
+      "school": "National University of Singapore",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}
